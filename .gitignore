@@ -13,6 +13,9 @@
 /.next/
 /out/
 
+# local video samples (do not commit large media files)
+/public/videos/
+
 # production
 /build
 
