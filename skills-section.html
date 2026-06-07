@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skills – Gebey Gebre</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --deep: #070d1a;
+      --surface: #0d1528;
+      --cyan: #06d0f5;
+      --violet: #a78bfa;
+      --amber: #fbbf24;
+      --on-surface: #e2e8f0;
+      --on-muted: #8899aa;
+      --outline: rgba(255, 255, 255, 0.06);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--deep);
+      color: var(--on-surface);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ─── GRID NOISE BACKGROUND ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(6, 208, 245, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6, 208, 245, 0.03) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── AMBIENT GLOWS ─── */
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+      transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glow-orb.tl {
+      width: 420px;
+      height: 420px;
+      top: -100px;
+      left: -100px;
+      background: radial-gradient(circle, rgba(6, 208, 245, 0.12) 0%, transparent 70%);
+    }
+
+    .glow-orb.br {
+      width: 380px;
+      height: 380px;
+      bottom: -80px;
+      right: -80px;
+      background: radial-gradient(circle, rgba(167, 139, 250, 0.12) 0%, transparent 70%);
+    }
+
+    .glow-orb.mc {
+      width: 300px;
+      height: 300px;
+      top: 45%;
+      left: 35%;
+      background: radial-gradient(circle, rgba(251, 191, 36, 0.06) 0%, transparent 70%);
+    }
+
+    /* ─── FLOATING PARTICLES ─── */
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: floatUp var(--dur) ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.6;
+      }
+
+      90% {
+        opacity: 0.2;
+      }
+
+      100% {
+        transform: translateY(-100vh) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    /* ─── CURSOR GLOW ─── */
+    #cursor-glow {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(6, 208, 245, 0.08) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 1;
+      transform: translate(-50%, -50%);
+      transition: left 0.12s ease, top 0.12s ease;
+    }
+
+    /* ─── MAIN LAYOUT ─── */
+    section.skills {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px 120px;
+    }
+
+    /* ─── SECTION LABEL ─── */
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: var(--cyan);
+      opacity: 0.6;
+    }
+
+    /* ─── HEADING ─── */
+    .skills-heading {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .skills-heading span.glow {
+      background: linear-gradient(90deg, var(--cyan), var(--violet));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 18px rgba(6, 208, 245, 0.35));
+    }
+
+    .skills-hint {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--on-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      opacity: 0.7;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.5
+      }
+
+      50% {
+        opacity: 0.9
+      }
+    }
+
+    /* ─── FILTER PILLS ─── */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 52px;
+    }
+
+    .filter-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: transparent;
+      color: var(--on-muted);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .filter-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .filter-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .filter-btn:hover {
+      border-color: rgba(6, 208, 245, 0.35);
+      color: var(--on-surface);
+      transform: translateY(-2px);
+    }
+
+    .filter-btn.active {
+      border-color: transparent;
+      color: #070d1a;
+      font-weight: 700;
+    }
+
+    .filter-btn.active::before {
+      opacity: 1;
+    }
+
+    /* ─── GRID ─── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    /* ─── SKILL CARD ─── */
+    .skill-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      padding: 20px;
+      cursor: grab;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.35s ease;
+      animation: cardEnter 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: var(--delay, 0s);
+      user-select: none;
+    }
+
+    .skill-card:active {
+      cursor: grabbing;
+    }
+
+    @keyframes cardEnter {
+      from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Gradient top border reveal */
+    .skill-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--card-gradient, linear-gradient(90deg, var(--cyan), var(--violet)));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 14px 14px 0 0;
+    }
+
+    /* Shimmer effect */
+    .skill-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.03) 50%, transparent 60%);
+      transform: translateX(-100%);
+      transition: transform 0.55s ease;
+      border-radius: 14px;
+    }
+
+    .skill-card:hover {
+      transform: translateY(-6px) scale(1.015);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(6, 208, 245, 0.15);
+      border-color: rgba(6, 208, 245, 0.18);
+    }
+
+    .skill-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .skill-card:hover::after {
+      transform: translateX(100%);
+    }
+
+    /* Drag active state */
+    .skill-card.dragging {
+      transform: scale(1.06) rotate(2deg) !important;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(6, 208, 245, 0.3) !important;
+      z-index: 999;
+      border-color: rgba(6, 208, 245, 0.4) !important;
+      cursor: grabbing;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    /* Spring back */
+    .skill-card.snap-back {
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.5s ease,
+        border-color 0.35s ease;
+    }
+
+    /* ─── CARD HEADER ─── */
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .card-icon-name {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      backdrop-filter: blur(8px);
+      flex-shrink: 0;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+    }
+
+    .skill-card:hover .icon-box {
+      transform: scale(1.1) rotate(-5deg);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .skill-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--on-surface);
+      line-height: 1.2;
+    }
+
+    .skill-pct {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--card-gradient, linear-gradient(135deg, var(--cyan), var(--violet)));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      flex-shrink: 0;
+    }
+
+    /* ─── PROGRESS BAR ─── */
+    .progress-track {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--card-gradient, linear-gradient(90deg, var(--cyan), var(--violet)));
+      width: 0%;
+      transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    /* Shimmer on progress bar */
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 40px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: barShimmer 1.8s ease-in-out infinite;
+    }
+
+    @keyframes barShimmer {
+      0% {
+        transform: translateX(-40px);
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(40px);
+        opacity: 0;
+      }
+    }
+
+    /* ─── TAG PILLS ─── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--on-muted);
+      transition: all 0.25s ease;
+    }
+
+    .skill-card:hover .tag {
+      border-color: rgba(6, 208, 245, 0.2);
+      color: var(--on-surface);
+    }
+
+    /* ─── EMPTY STATE ─── */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 60px 0;
+      color: var(--on-muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+    }
+
+    /* ─── RESPONSIVENESS ─── */
+    @media (max-width: 600px) {
+      .skills-grid {
+        grid-template-columns: 1fr;
+      }
+
+      section.skills {
+        padding: 60px 16px 80px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Ambient Glow Orbs -->
+  <div class="glow-orb tl" id="orb-tl"></div>
+  <div class="glow-orb br" id="orb-br"></div>
+  <div class="glow-orb mc" id="orb-mc"></div>
+
+  <!-- Floating Particles -->
+  <div id="particles"></div>
+
+  <!-- Cursor Glow -->
+  <div id="cursor-glow"></div>
+
+  <section class="skills">
+    <div class="section-label">Technical Skills</div>
+    <h2 class="skills-heading">My <span class="glow">Toolbox</span></h2>
+    <p class="skills-hint">⚡ Drag any card · Filter by category · Hover for effects</p>
+
+    <div class="filter-bar" id="filterBar"></div>
+    <div class="skills-grid" id="skillsGrid"></div>
+  </section>
+
+  <script>
+    /* ─────────────── DATA ─────────────── */
+    const SKILLS = [
+      {
+        name: "C++", emoji: "⚙️", pct: 85, cat: "language",
+        gradient: "linear-gradient(135deg, #06d0f5, #3b82f6)",
+        tags: ["OOP", "Pointers", "STL", "Design Patterns"]
+      },
+      {
+        name: "Java", emoji: "☕", pct: 80, cat: "language",
+        gradient: "linear-gradient(135deg, #f97316, #a78bfa)",
+        tags: ["OOP", "Collections", "Swing", "JVM"]
+      },
+      {
+        name: "PHP", emoji: "🐘", pct: 75, cat: "web",
+        gradient: "linear-gradient(135deg, #818cf8, #6366f1)",
+        tags: ["MVC", "PDO", "Sessions", "REST APIs"]
+      },
+      {
+        name: "JavaScript", emoji: "🌐", pct: 78, cat: "web",
+        gradient: "linear-gradient(135deg, #fbbf24, #f97316)",
+        tags: ["DOM", "Fetch API", "ES6+", "Async/Await"]
+      },
+      {
+        name: "HTML & CSS", emoji: "🎨", pct: 90, cat: "web",
+        gradient: "linear-gradient(135deg, #f472b6, #f97316)",
+        tags: ["Flexbox", "Grid", "Animations", "Tailwind"]
+      },
+      {
+        name: "Data Structures", emoji: "📊", pct: 82, cat: "cs",
+        gradient: "linear-gradient(135deg, #06d0f5, #10b981)",
+        tags: ["Linked Lists", "Trees", "Graphs", "Hash Maps"]
+      },
+      {
+        name: "Algorithms", emoji: "🧮", pct: 75, cat: "cs",
+        gradient: "linear-gradient(135deg, #a78bfa, #06d0f5)",
+        tags: ["Big O", "Sorting", "Searching", "Recursion"]
+      },
+      {
+        name: "OOP", emoji: "📦", pct: 85, cat: "cs",
+        gradient: "linear-gradient(135deg, #34d399, #3b82f6)",
+        tags: ["Inheritance", "Encapsulation", "Polymorphism"]
+      },
+      {
+        name: "SQL & MySQL", emoji: "🗄️", pct: 78, cat: "cs",
+        gradient: "linear-gradient(135deg, #06b6d4, #6366f1)",
+        tags: ["Queries", "Joins", "Indexing", "Schema"]
+      },
+      {
+        name: "Git & GitHub", emoji: "🐙", pct: 85, cat: "tools",
+        gradient: "linear-gradient(135deg, #f1f5f9, #94a3b8)",
+        tags: ["Version Control", "Branches", "PRs", "Conflicts"]
+      },
+      {
+        name: "IDEs & Editors", emoji: "💻", pct: 88, cat: "tools",
+        gradient: "linear-gradient(135deg, #06d0f5, #a78bfa)",
+        tags: ["VS Code", "NetBeans", "Debugging", "Extensions"]
+      },
+      {
+        name: "Linux Basics", emoji: "🐧", pct: 70, cat: "tools",
+        gradient: "linear-gradient(135deg, #fbbf24, #10b981)",
+        tags: ["Bash", "Permissions", "Processes", "Scripts"]
+      },
+    ];
+
+    const CATEGORIES = [
+      { id: "all", label: "ALL" },
+      { id: "language", label: "LANGUAGES" },
+      { id: "web", label: "WEB" },
+      { id: "cs", label: "CS FUNDAMENTALS" },
+      { id: "tools", label: "TOOLS" },
+    ];
+
+    /* ─────────────── STATE ─────────────── */
+    let activeFilter = "all";
+
+    /* ─────────────── PARTICLES ─────────────── */
+    (function spawnParticles() {
+      const container = document.getElementById("particles");
+      for (let i = 0; i < 28; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        const size = Math.random() * 4 + 1;
+        const colors = ["#06d0f5", "#a78bfa", "#fbbf24", "#f472b6", "#34d399"];
+        p.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random() * 100}%;
+        bottom:${Math.random() * 20}%;
+        background:${colors[Math.floor(Math.random() * colors.length)]};
+        --dur:${6 + Math.random() * 8}s;
+        --delay:${Math.random() * 8}s;
+        box-shadow: 0 0 ${size * 3}px currentColor;
+      `;
+        container.appendChild(p);
+      }
+    })();
+
+    /* ─────────────── CURSOR GLOW ─────────────── */
+    const cursorGlow = document.getElementById("cursor-glow");
+    document.addEventListener("mousemove", e => {
+      cursorGlow.style.left = e.clientX + "px";
+      cursorGlow.style.top = e.clientY + "px";
+      // Parallax on glow orbs
+      const mx = (e.clientX / window.innerWidth - 0.5) * 60;
+      const my = (e.clientY / window.innerHeight - 0.5) * 60;
+      document.getElementById("orb-tl").style.transform = `translate(${-mx * 0.4}px, ${-my * 0.4}px)`;
+      document.getElementById("orb-br").style.transform = `translate(${mx * 0.5}px, ${my * 0.5}px)`;
+      document.getElementById("orb-mc").style.transform = `translate(${mx * 0.25}px, ${my * 0.25}px)`;
+    });
+
+    /* ─────────────── BUILD FILTER BAR ─────────────── */
+    const filterBar = document.getElementById("filterBar");
+    CATEGORIES.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.className = "filter-btn" + (cat.id === activeFilter ? " active" : "");
+      btn.innerHTML = `<span>${cat.label}</span>`;
+      btn.dataset.cat = cat.id;
+      btn.addEventListener("click", () => {
+        if (activeFilter === cat.id) return;
+        activeFilter = cat.id;
+        filterBar.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderGrid();
+      });
+      filterBar.appendChild(btn);
+    });
+
+    /* ─────────────── RENDER GRID ─────────────── */
+    function renderGrid() {
+      const grid = document.getElementById("skillsGrid");
+      grid.innerHTML = "";
+
+      const filtered = activeFilter === "all"
+        ? SKILLS
+        : SKILLS.filter(s => s.cat === activeFilter);
+
+      if (!filtered.length) {
+        grid.innerHTML = '<div class="empty-state">No skills found in this category.</div>';
+        return;
+      }
+
+      filtered.forEach((skill, i) => {
+        const card = document.createElement("div");
+        card.className = "skill-card";
+        card.style.cssText = `--delay:${i * 0.06}s; --card-gradient:${skill.gradient}`;
+
+        card.innerHTML = `
+        <div class="card-header">
+          <div class="card-icon-name">
+            <div class="icon-box">${skill.emoji}</div>
+            <div class="skill-name">${skill.name}</div>
+          </div>
+          <div class="skill-pct" style="background:${skill.gradient};-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${skill.pct}%</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" data-pct="${skill.pct}" style="background:${skill.gradient}"></div>
+        </div>
+        <div class="tags">
+          ${skill.tags.map(t => `<span class="tag">${t}</span>`).join("")}
+        </div>
+      `;
+
+        grid.appendChild(card);
+        attachDrag(card);
+      });
+
+      /* Animate progress bars after DOM paint */
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.querySelectorAll(".progress-fill").forEach(bar => {
+          bar.style.width = bar.dataset.pct + "%";
+        });
+      }));
+    }
+
+    /* ─────────────── DRAG ─────────────── */
+    function attachDrag(card) {
+      let isDragging = false;
+      let startX, startY, startLeft, startTop;
+      let originLeft, originTop;
+      let velX = 0, velY = 0;
+      let lastX, lastY;
+      let lastT;
+      let animFrame;
+
+      function getRect() { return card.getBoundingClientRect(); }
+
+      card.addEventListener("mousedown", startDrag);
+      card.addEventListener("touchstart", e => startDrag(e.touches[0]), { passive: true });
+
+      function startDrag(e) {
+        isDragging = true;
+        const rect = getRect();
+
+        // Save original position in normal flow
+        const parentRect = card.parentElement.getBoundingClientRect();
+        originLeft = rect.left - parentRect.left;
+        originTop = rect.top - parentRect.top;
+
+        startX = e.clientX;
+        startY = e.clientY;
+        startLeft = originLeft;
+        startTop = originTop;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        lastT = Date.now();
+        velX = 0; velY = 0;
+
+        card.classList.remove("snap-back");
+        card.classList.add("dragging");
+
+        // Lock position absolutely
+        const cs = getComputedStyle(card.parentElement);
+        const gridGap = parseFloat(cs.gap) || 18;
+        card.style.position = "absolute";
+        card.style.left = originLeft + "px";
+        card.style.top = originTop + "px";
+        card.style.width = rect.width + "px";
+        card.style.zIndex = 1000;
+
+        // Phantom placeholder
+        const ph = document.createElement("div");
+        ph.className = "_placeholder";
+        ph.style.cssText = `
+        width:${rect.width}px;
+        height:${rect.height}px;
+        border-radius:14px;
+        background:rgba(6,208,245,0.04);
+        border:1px dashed rgba(6,208,245,0.2);
+        flex-shrink:0;
+      `;
+        card.parentNode.insertBefore(ph, card.nextSibling);
+        card._ph = ph;
+
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+        document.addEventListener("touchmove", t => onMove(t.touches[0]), { passive: true });
+        document.addEventListener("touchend", onUp);
+      }
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        const now = Date.now();
+        const dt = Math.max(now - lastT, 1);
+        velX = (e.clientX - lastX) / dt;
+        velY = (e.clientY - lastY) / dt;
+        lastX = e.clientX; lastY = e.clientY; lastT = now;
+
+        card.style.left = startLeft + dx + "px";
+        card.style.top = startTop + dy + "px";
+      }
+
+      function onUp() {
+        if (!isDragging) return;
+        isDragging = false;
+        card.classList.remove("dragging");
+        card.classList.add("snap-back");
+
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+        document.removeEventListener("touchmove", onMove);
+        document.removeEventListener("touchend", onUp);
+
+        // Remove placeholder
+        if (card._ph) { card._ph.remove(); card._ph = null; }
+
+        // Spring-back with velocity throw, then settle
+        const momentum = 180;
+        const throwLeft = originLeft + velX * momentum;
+        const throwY = originTop + velY * momentum;
+
+        card.style.transition = "left 0.12s ease, top 0.12s ease";
+        card.style.left = throwLeft + "px";
+        card.style.top = throwY + "px";
+
+        setTimeout(() => {
+          card.style.transition = "left 0.55s cubic-bezier(0.34,1.56,0.64,1), top 0.55s cubic-bezier(0.34,1.56,0.64,1), transform 0.55s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s ease, border-color 0.35s ease";
+          card.style.left = originLeft + "px";
+          card.style.top = originTop + "px";
+        }, 120);
+
+        // After snap, reset to flow
+        setTimeout(() => {
+          card.style.position = "";
+          card.style.left = "";
+          card.style.top = "";
+          card.style.width = "";
+          card.style.zIndex = "";
+          card.classList.remove("snap-back");
+        }, 700);
+      }
+    }
+
+    /* ─────────────── CARD TILT ON MOUSE MOVE ─────────────── */
+    document.addEventListener("mousemove", e => {
+      document.querySelectorAll(".skill-card:not(.dragging)").forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (e.clientX - cx) / rect.width;
+        const dy = (e.clientY - cy) / rect.height;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 0.8) {
+          card.style.transform = `translateY(-6px) scale(1.015) rotateX(${-dy * 7}deg) rotateY(${dx * 7}deg)`;
+        } else {
+          card.style.transform = "";
+        }
+      });
+    });
+    document.addEventListener("mouseleave", () => {
+      document.querySelectorAll(".skill-card:not(.dragging)").forEach(card => {
+        card.style.transform = "";
+      });
+    });
+
+    /* ─────────────── INIT ─────────────── */
+    renderGrid();
+  </script>
+</body>
+
+</html>

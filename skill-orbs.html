@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Skill Orbs — Gebey Gebre</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #050b18;
+    --cyan: #06d0f5;
+    --violet: #a78bfa;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    overflow: hidden;
+    font-family: 'Syne', sans-serif;
+    color: #e2e8f0;
+  }
+
+  canvas {
+    display: block;
+    position: fixed;
+    inset: 0;
+    cursor: crosshair;
+  }
+
+  /* ─── FILTER BAR ─── */
+  #ui {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    padding: 20px 32px 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: linear-gradient(180deg, rgba(5,11,24,0.95) 70%, transparent);
+    pointer-events: none;
+  }
+
+  .title-block { pointer-events: none; margin-right: 16px; }
+  .title-block .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #06d0f5;
+    opacity: 0.8;
+  }
+  .title-block h1 {
+    font-size: 22px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #06d0f5, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+  }
+
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; pointer-events: all; }
+
+  .fbtn {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 7px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all 0.28s cubic-bezier(0.16,1,0.3,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .fbtn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #06d0f5, #a78bfa);
+    opacity: 0;
+    transition: opacity 0.28s ease;
+  }
+  .fbtn span { position: relative; z-index: 1; }
+  .fbtn:hover { border-color: rgba(6,208,245,0.4); color: #fff; transform: translateY(-2px); }
+  .fbtn.active { border-color: transparent; color: #050b18; font-weight: 700; }
+  .fbtn.active::before { opacity: 1; }
+
+  /* ─── HINT BAR ─── */
+  #hint {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    z-index: 10;
+    pointer-events: none;
+    animation: hintPulse 3s ease-in-out infinite;
+  }
+  @keyframes hintPulse { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+
+  /* ─── DETAIL PANEL ─── */
+  #panel {
+    position: fixed;
+    bottom: 52px; right: 28px;
+    width: 230px;
+    background: rgba(5,11,24,0.88);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 18px 20px;
+    z-index: 20;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+    pointer-events: none;
+  }
+  #panel.show { opacity: 1; transform: translateY(0); }
+  #panel .pname {
+    font-size: 16px; font-weight: 700;
+    background: var(--pcol, #06d0f5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  #panel .ppct {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; color: rgba(255,255,255,0.5);
+    margin-bottom: 10px;
+  }
+  #panel .ptags { display: flex; flex-wrap: wrap; gap: 5px; }
+  #panel .ptag {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.6);
+  }
+</style>
+</head>
+<body>
+
+<div id="ui">
+  <div class="title-block">
+    <div class="label">Technical Arsenal</div>
+    <h1>Skill Orbs</h1>
+  </div>
+  <div class="filter-bar" id="filterBar"></div>
+</div>
+
+<canvas id="c"></canvas>
+<div id="hint">Hover to attract · Click to explode · Drag to throw</div>
+<div id="panel">
+  <div class="pname" id="pname"></div>
+  <div class="ppct" id="ppct"></div>
+  <div class="ptags" id="ptags"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   SKILL DATA
+═══════════════════════════════════════ */
+const SKILLS_DATA = [
+  { name:"C++",            pct:85, cat:"language", color:"#00d4ff", color2:"#0055ff",  emoji:"⚙️",  tags:["OOP","Pointers","STL","Big O"] },
+  { name:"Java",           pct:80, cat:"language", color:"#ff7043", color2:"#e040fb",  emoji:"☕",  tags:["OOP","JVM","Swing","Collections"] },
+  { name:"JavaScript",     pct:78, cat:"web",      color:"#fbbf24", color2:"#f97316",  emoji:"🌐",  tags:["ES6+","DOM","Fetch","Async"] },
+  { name:"PHP",            pct:75, cat:"web",      color:"#818cf8", color2:"#6366f1",  emoji:"🐘",  tags:["MVC","PDO","REST","Sessions"] },
+  { name:"HTML & CSS",     pct:90, cat:"web",      color:"#f472b6", color2:"#f97316",  emoji:"🎨",  tags:["Flexbox","Grid","Tailwind","Animations"] },
+  { name:"Data Structures",pct:82, cat:"cs",       color:"#06d0f5", color2:"#10b981",  emoji:"📊",  tags:["Trees","Graphs","Hash Maps","Stacks"] },
+  { name:"Algorithms",     pct:75, cat:"cs",       color:"#a78bfa", color2:"#06d0f5",  emoji:"🧮",  tags:["Sorting","Recursion","Greedy","DP"] },
+  { name:"OOP",            pct:85, cat:"cs",       color:"#34d399", color2:"#3b82f6",  emoji:"📦",  tags:["Inheritance","Polymorphism","SOLID"] },
+  { name:"SQL & MySQL",    pct:78, cat:"cs",       color:"#06b6d4", color2:"#6366f1",  emoji:"🗄️",  tags:["Joins","Indexing","Schema","Queries"] },
+  { name:"Git & GitHub",   pct:85, cat:"tools",    color:"#e2e8f0", color2:"#94a3b8",  emoji:"🐙",  tags:["Branches","PRs","Merge","CI/CD"] },
+  { name:"IDEs & Editors", pct:88, cat:"tools",    color:"#06d0f5", color2:"#a78bfa",  emoji:"💻",  tags:["VS Code","NetBeans","Debug","Snippets"] },
+  { name:"Linux",          pct:70, cat:"tools",    color:"#fbbf24", color2:"#10b981",  emoji:"🐧",  tags:["Bash","Permissions","Pipes","Cron"] },
+];
+
+const CATEGORIES = [
+  { id:"all",      label:"All" },
+  { id:"language", label:"Languages" },
+  { id:"web",      label:"Web" },
+  { id:"cs",       label:"CS Fundamentals" },
+  { id:"tools",    label:"Tools" },
+];
+
+/* ═══════════════════════════════════════
+   CANVAS SETUP
+═══════════════════════════════════════ */
+const canvas = document.getElementById("c");
+const ctx    = canvas.getContext("2d");
+let W, H;
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", () => { resize(); scatter(); });
+
+/* ═══════════════════════════════════════
+   ORB CLASS
+═══════════════════════════════════════ */
+class Orb {
+  constructor(data, idx) {
+    this.data    = data;
+    this.name    = data.name;
+    this.pct     = data.pct;
+    this.cat     = data.cat;
+    this.color   = data.color;
+    this.color2  = data.color2;
+    this.emoji   = data.emoji;
+    this.tags    = data.tags;
+
+    this.baseR   = 38 + Math.random() * 14;
+    this.r       = this.baseR;
+    this.targetR = this.baseR;
+    this.mass    = this.baseR * 0.8;
+
+    this.x  = Math.random() * (W - 200) + 100;
+    this.y  = Math.random() * (H - 200) + 140;
+    this.vx = (Math.random() - 0.5) * 1.5;
+    this.vy = (Math.random() - 0.5) * 1.5;
+
+    this.exploded     = false;
+    this.explodeScale = 1;
+    this.explodeTarget= 1;
+    this.tagAngle     = 0;
+    this.tagSpeeds    = data.tags.map(() => (0.008 + Math.random() * 0.008) * (Math.random() < 0.5 ? 1 : -1));
+
+    this.pulseRipples = [];   // [{r, alpha}]
+    this.opacity      = 1;
+    this.targetOpacity= 1;
+    this.active       = true;
+
+    this.hovered = false;
+    this.dragging= false;
+    this.dragOffX= 0;
+    this.dragOffY= 0;
+  }
+
+  get displayR() { return this.baseR * this.explodeScale; }
+
+  update(mouse, orbs) {
+    if (this.dragging) return;
+
+    /* Cursor magnetic attraction */
+    const dx   = mouse.x - this.x;
+    const dy   = mouse.y - this.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const RANGE = 150;
+
+    if (dist < RANGE && dist > 1 && !this.exploded) {
+      const force  = 0.18 / dist;
+      this.vx += dx * force;
+      this.vy += dy * force;
+    }
+
+    /* Repulsion from other orbs */
+    for (const o of orbs) {
+      if (o === this) continue;
+      const ox = o.x - this.x;
+      const oy = o.y - this.y;
+      const od = Math.sqrt(ox*ox + oy*oy) || 1;
+      const minD = this.displayR + o.displayR + 8;
+      if (od < minD) {
+        const push = (minD - od) / od * 0.15;
+        this.vx -= ox * push;
+        this.vy -= oy * push;
+      }
+    }
+
+    /* Repulsion burst when another orb explodes */
+    if (this._repulse) {
+      this.vx += this._repulse.x;
+      this.vy += this._repulse.y;
+      this._repulse = null;
+    }
+
+    /* Physics integration */
+    this.vx *= 0.97;
+    this.vy *= 0.97;
+    this.x  += this.vx;
+    this.y  += this.vy;
+
+    /* Wall bounce */
+    const pad = this.displayR + 2;
+    const topPad = 90 + pad;
+
+    if (this.x < pad)    { this.x = pad;    this.vx *= -0.65; }
+    if (this.x > W - pad){ this.x = W - pad; this.vx *= -0.65; }
+    if (this.y < topPad) { this.y = topPad;  this.vy *= -0.65; }
+    if (this.y > H - pad){ this.y = H - pad; this.vy *= -0.65; }
+
+    /* Spring to target scale */
+    this.explodeScale += (this.explodeTarget - this.explodeScale) * 0.12;
+    this.opacity      += (this.targetOpacity - this.opacity)       * 0.1;
+
+    /* Ripples decay */
+    this.pulseRipples = this.pulseRipples
+      .map(p => ({ r: p.r + 1.6, alpha: p.alpha - 0.018 }))
+      .filter(p => p.alpha > 0);
+
+    /* Tag orbit */
+    if (this.exploded) this.tagAngle += 0.006;
+  }
+
+  draw(ctx) {
+    if (this.opacity < 0.02) return;
+    ctx.save();
+    ctx.globalAlpha = this.opacity;
+
+    const r   = this.displayR;
+    const cx  = this.x;
+    const cy  = this.y;
+
+    /* ── Outer glow ── */
+    ctx.save();
+    ctx.shadowBlur  = this.hovered ? 35 : 22;
+    ctx.shadowColor = this.color;
+
+    const grad = ctx.createRadialGradient(cx - r*0.25, cy - r*0.25, 0, cx, cy, r);
+    grad.addColorStop(0, hexAlpha(this.color,  0.95));
+    grad.addColorStop(0.6, hexAlpha(this.color, 0.6));
+    grad.addColorStop(1, hexAlpha(this.color2, 0.8));
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.restore();
+
+    /* ── Glassy highlight ── */
+    const hi = ctx.createRadialGradient(cx - r*0.3, cy - r*0.45, 0, cx, cy, r);
+    hi.addColorStop(0, "rgba(255,255,255,0.25)");
+    hi.addColorStop(0.5, "rgba(255,255,255,0.04)");
+    hi.addColorStop(1, "transparent");
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = hi;
+    ctx.fill();
+
+    /* ── Border ring ── */
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = hexAlpha(this.color, 0.35);
+    ctx.lineWidth   = 1.5;
+    ctx.stroke();
+
+    /* ── Progress arc ── */
+    const startAngle = -Math.PI / 2;
+    const endAngle   = startAngle + (this.pct / 100) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r - 2, startAngle, endAngle);
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth   = 3;
+    ctx.lineCap     = "round";
+    ctx.shadowBlur  = 8;
+    ctx.shadowColor = this.color;
+    ctx.stroke();
+    ctx.shadowBlur  = 0;
+
+    /* ── Name text ── */
+    const fontSize = Math.max(9, Math.floor(r * 0.35));
+    ctx.fillStyle   = "#fff";
+    ctx.font        = `700 ${fontSize}px 'Syne', sans-serif`;
+    ctx.textAlign   = "center";
+    ctx.textBaseline= "middle";
+
+    // Wrap long names
+    const words = this.name.split(" ");
+    if (words.length > 1 && ctx.measureText(this.name).width > r * 1.5) {
+      const midW  = Math.ceil(words.length / 2);
+      const line1 = words.slice(0, midW).join(" ");
+      const line2 = words.slice(midW).join(" ");
+      ctx.fillText(line1, cx, cy - fontSize * 0.6);
+      ctx.fillText(line2, cx, cy + fontSize * 0.6);
+    } else {
+      ctx.fillText(this.name, cx, cy - fontSize * 0.3);
+    }
+
+    /* ── Percentage ── */
+    const pctSize = Math.max(7, Math.floor(r * 0.22));
+    ctx.font       = `400 ${pctSize}px 'Space Mono', monospace`;
+    ctx.fillStyle  = hexAlpha(this.color, 0.9);
+    ctx.textBaseline = "middle";
+    ctx.fillText(`${this.pct}%`, cx, cy + fontSize * 0.65);
+
+    /* ── Ripple pulses ── */
+    for (const rp of this.pulseRipples) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r + rp.r, 0, Math.PI * 2);
+      ctx.strokeStyle = hexAlpha(this.color, rp.alpha);
+      ctx.lineWidth   = 1.2;
+      ctx.stroke();
+    }
+
+    /* ── Explode: orbiting tags ── */
+    if (this.explodeScale > 1.3) {
+      const orbitR = r * 1.7;
+      this.tags.forEach((tag, i) => {
+        const angle = this.tagAngle + (i / this.tags.length) * Math.PI * 2;
+        const tx = cx + Math.cos(angle) * orbitR;
+        const ty = cy + Math.sin(angle) * orbitR;
+
+        /* Tag pill */
+        const tw = ctx.measureText(tag).width + 20;
+        const th = 18;
+        ctx.save();
+        ctx.translate(tx, ty);
+        ctx.rotate(angle + Math.PI / 2);
+
+        ctx.beginPath();
+        roundRect(ctx, -tw/2, -th/2, tw, th, 9);
+        ctx.fillStyle   = `rgba(5,11,24,0.85)`;
+        ctx.fill();
+        ctx.strokeStyle = hexAlpha(this.color, 0.55);
+        ctx.lineWidth   = 1;
+        ctx.stroke();
+
+        ctx.rotate(-(angle + Math.PI / 2));
+        ctx.font        = `700 8px 'Space Mono', monospace`;
+        ctx.fillStyle   = hexAlpha(this.color, 0.95);
+        ctx.textAlign   = "center";
+        ctx.textBaseline= "middle";
+        ctx.fillText(tag.toUpperCase(), 0, 0);
+        ctx.restore();
+
+        /* Tag orbit line */
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+        ctx.lineTo(tx - Math.cos(angle) * 14, ty - Math.sin(angle) * 14);
+        ctx.strokeStyle = hexAlpha(this.color, 0.15);
+        ctx.lineWidth   = 1;
+        ctx.setLineDash([3, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      });
+
+      /* Orbit circle guide */
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 1.7, 0, Math.PI * 2);
+      ctx.strokeStyle = hexAlpha(this.color, 0.07);
+      ctx.lineWidth   = 1;
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  explode() {
+    this.exploded      = !this.exploded;
+    this.explodeTarget = this.exploded ? 2 : 1;
+    return this.exploded;
+  }
+
+  pulse() {
+    this.pulseRipples.push({ r: 0, alpha: 0.7 });
+  }
+
+  hitTest(mx, my) {
+    const dx = mx - this.x;
+    const dy = my - this.y;
+    return Math.sqrt(dx*dx + dy*dy) < this.displayR + (this.exploded ? this.displayR * 0.7 : 0);
+  }
+}
+
+/* ═══════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════ */
+function hexAlpha(hex, a) {
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+/* ═══════════════════════════════════════
+   STAR FIELD
+═══════════════════════════════════════ */
+const STARS = Array.from({length: 200}, () => ({
+  x: Math.random(), y: Math.random(),
+  r: Math.random() * 1.2 + 0.2,
+  a: Math.random() * 0.7 + 0.1,
+  twinkleSpeed: 0.005 + Math.random() * 0.01,
+  twinklePhase: Math.random() * Math.PI * 2,
+}));
+
+function drawStars(t) {
+  for (const s of STARS) {
+    const alpha = s.a * (0.5 + 0.5 * Math.sin(t * s.twinkleSpeed + s.twinklePhase));
+    ctx.beginPath();
+    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+    ctx.fill();
+  }
+}
+
+/* ═══════════════════════════════════════
+   ORBS INIT
+═══════════════════════════════════════ */
+let orbs = [];
+let activeFilter = "all";
+let explodedOrb  = null;
+
+function scatter() {
+  orbs = SKILLS_DATA.map((d, i) => new Orb(d, i));
+  applyFilter();
+}
+scatter();
+
+function applyFilter() {
+  for (const o of orbs) {
+    if (activeFilter === "all" || o.cat === activeFilter) {
+      o.targetOpacity = 1;
+      o.active = true;
+      /* Playful bounce */
+      o.vy -= 3 + Math.random() * 3;
+      o.vx  += (Math.random() - 0.5) * 4;
+    } else {
+      o.targetOpacity = 0.18;
+      o.active = false;
+    }
+  }
+}
+
+/* ═══════════════════════════════════════
+   MOUSE / TOUCH
+═══════════════════════════════════════ */
+const mouse = { x: W / 2, y: H / 2 };
+let dragOrb  = null;
+
+canvas.addEventListener("mousemove", e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+
+  let anyHover = false;
+  for (const o of orbs) {
+    o.hovered = o.hitTest(e.clientX, e.clientY);
+    if (o.hovered) { anyHover = true; }
+  }
+  canvas.style.cursor = anyHover ? "pointer" : "crosshair";
+
+  if (dragOrb) {
+    dragOrb.x = e.clientX + dragOrb.dragOffX;
+    dragOrb.y = e.clientY + dragOrb.dragOffY;
+    dragOrb.vx = 0; dragOrb.vy = 0;
+  }
+});
+
+canvas.addEventListener("mousedown", e => {
+  for (const o of orbs) {
+    if (o.hitTest(e.clientX, e.clientY)) {
+      dragOrb = o;
+      o.dragging   = true;
+      o.dragOffX   = o.x - e.clientX;
+      o.dragOffY   = o.y - e.clientY;
+      o.dragStartX = o.x;
+      o.dragStartY = o.y;
+      o.dragMoved  = false;
+      break;
+    }
+  }
+});
+
+canvas.addEventListener("mouseup", e => {
+  if (dragOrb) {
+    const dx = Math.abs(dragOrb.x - dragOrb.dragStartX);
+    const dy = Math.abs(dragOrb.y - dragOrb.dragStartY);
+
+    if (dx < 5 && dy < 5) {
+      // It was a click: explode/collapse
+      const wasExploded = dragOrb.exploded;
+      if (explodedOrb && explodedOrb !== dragOrb) {
+        explodedOrb.explode(); // collapse previous
+        explodedOrb = null;
+      }
+      const nowExploded = dragOrb.explode();
+      if (nowExploded) {
+        explodedOrb = dragOrb;
+        // Repulse nearby orbs
+        for (const o of orbs) {
+          if (o === dragOrb) continue;
+          const dx = o.x - dragOrb.x;
+          const dy = o.y - dragOrb.y;
+          const d  = Math.sqrt(dx*dx + dy*dy) || 1;
+          if (d < 260) {
+            const str = (260 - d) / d * 2.5;
+            o._repulse = { x: dx * str / d * 10, y: dy * str / d * 10 };
+          }
+        }
+        showPanel(dragOrb);
+      } else {
+        hidePanel();
+        explodedOrb = null;
+      }
+    } else {
+      // Throw with velocity
+      dragOrb.vx = (dragOrb.x - dragOrb.dragStartX) * 0.08;
+      dragOrb.vy = (dragOrb.y - dragOrb.dragStartY) * 0.08;
+    }
+    dragOrb.dragging = false;
+    dragOrb.pulse();
+    dragOrb = null;
+  }
+});
+
+canvas.addEventListener("mouseleave", () => {
+  mouse.x = W / 2;
+  mouse.y = H / 2;
+  if (dragOrb) { dragOrb.dragging = false; dragOrb = null; }
+});
+
+/* Hover ripple */
+setInterval(() => {
+  for (const o of orbs) {
+    if (o.hovered && !o.exploded && Math.random() < 0.3) o.pulse();
+  }
+}, 400);
+
+/* ═══════════════════════════════════════
+   PANEL
+═══════════════════════════════════════ */
+const panel  = document.getElementById("panel");
+const pname  = document.getElementById("pname");
+const ppct   = document.getElementById("ppct");
+const ptagsEl= document.getElementById("ptags");
+
+function showPanel(o) {
+  panel.style.setProperty("--pcol", `linear-gradient(90deg, ${o.color}, ${o.color2})`);
+  pname.style.background = `linear-gradient(90deg, ${o.color}, ${o.color2})`;
+  pname.style.webkitBackgroundClip = "text";
+  pname.style.webkitTextFillColor  = "transparent";
+  pname.textContent  = o.emoji + " " + o.name;
+  ppct.textContent   = `Proficiency: ${o.pct}%`;
+  ptagsEl.innerHTML  = o.tags.map(t => `<span class="ptag">${t}</span>`).join("");
+  panel.classList.add("show");
+}
+
+function hidePanel() { panel.classList.remove("show"); }
+
+/* ═══════════════════════════════════════
+   FILTER BAR
+═══════════════════════════════════════ */
+const filterBar = document.getElementById("filterBar");
+CATEGORIES.forEach(cat => {
+  const btn = document.createElement("button");
+  btn.className = "fbtn" + (cat.id === "all" ? " active" : "");
+  btn.innerHTML = `<span>${cat.label}</span>`;
+  btn.dataset.cat = cat.id;
+  btn.addEventListener("click", () => {
+    filterBar.querySelectorAll(".fbtn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilter = cat.id;
+    if (explodedOrb) { explodedOrb.explode(); explodedOrb = null; hidePanel(); }
+    applyFilter();
+  });
+  filterBar.appendChild(btn);
+});
+
+/* ═══════════════════════════════════════
+   DRAW CURSOR MAGNET
+═══════════════════════════════════════ */
+function drawMagnet(t) {
+  const alpha = 0.06 + 0.03 * Math.sin(t * 0.04);
+  const grad  = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 150);
+  grad.addColorStop(0, `rgba(6,208,245,${alpha * 3})`);
+  grad.addColorStop(0.6, `rgba(6,208,245,${alpha})`);
+  grad.addColorStop(1, "transparent");
+
+  ctx.beginPath();
+  ctx.arc(mouse.x, mouse.y, 150, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  /* Dashed border */
+  ctx.beginPath();
+  ctx.arc(mouse.x, mouse.y, 150, 0, Math.PI * 2);
+  ctx.strokeStyle = `rgba(6,208,245,${0.1 + 0.05 * Math.sin(t * 0.05)})`;
+  ctx.lineWidth   = 1;
+  ctx.setLineDash([4, 8]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+/* ═══════════════════════════════════════
+   MAIN LOOP
+═══════════════════════════════════════ */
+let t = 0;
+function loop() {
+  t++;
+  ctx.clearRect(0, 0, W, H);
+
+  /* Background */
+  ctx.fillStyle = "#050b18";
+  ctx.fillRect(0, 0, W, H);
+
+  /* Stars */
+  drawStars(t);
+
+  /* Radial vignette */
+  const vig = ctx.createRadialGradient(W/2, H/2, H*0.2, W/2, H/2, H*0.8);
+  vig.addColorStop(0, "transparent");
+  vig.addColorStop(1, "rgba(2,4,10,0.55)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, W, H);
+
+  /* Cursor magnet */
+  drawMagnet(t);
+
+  /* Update & draw orbs */
+  for (const o of orbs) o.update(mouse, orbs);
+
+  // Draw non-exploded first, then exploded on top
+  const sorted = [...orbs].sort((a, b) => (a.exploded ? 1 : 0) - (b.exploded ? 1 : 0));
+  for (const o of sorted) o.draw(ctx);
+
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
