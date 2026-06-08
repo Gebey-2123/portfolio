@@ -1,8 +1,8 @@
-import React, { useMemo, useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import React, { useMemo, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Play, Film, Megaphone, FileText } from "lucide-react";
 
-type SkillTab = "Video" | "marketing" | "content";
+type SkillTab = "video" | "marketing" | "content";
 
 type Metric = { label: string; value: string };
 
@@ -263,6 +263,7 @@ function DemoPlayer({ srcs }: { srcs: string[] }) {
 function CardThumbnail({ sample }: { sample: SampleWork }) {
   return (
     <div className="relative aspect-video bg-slate-900">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={sample.image} alt={sample.title} className="w-full h-full object-cover" />
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">{sample.icon}</div>
       <div className="absolute top-2 right-2 bg-black/50 p-1 rounded">
@@ -306,7 +307,7 @@ export default function OtherSkills() {
 
   // map id -> video src list for modal playback (primary + fallbacks)
   // map id -> local video paths (serve from public/videos). Use fetch_videos.ps1 to populate.
-  const videoMap: Record<string, string[]> = {
+  const videoMap: Record<string, string[]> = useMemo(() => ({
     // local-first candidates including exact filenames you provided (both root public and /videos folder)
     "video-1": ["/videos/video editing1.mp4", "/video editing1.mp4", "/videos/video editing1.mp4"],
     "video-2": ["/videos/video editing2.mp4", "/video editing2.mp4"],
@@ -316,15 +317,15 @@ export default function OtherSkills() {
     "marketing-5": ["/videos/Digital Marketing.mp4", "/Digital Marketing.mp4", "/videos/Digital Marketing.mp4"],
     // content: keep existing content file mapping and also accept creative name
     "content-5": ["/videos/content-1.mp4", "/content-1.mp4", "/videos/Content Creation.mp4", "/Content Creation.mp4"],
-  };
+  }), []);
 
   // remote fallbacks if local files are missing or blocked
-  const remoteVideoMap: Record<string, string[]> = {
+  const remoteVideoMap: Record<string, string[]> = useMemo(() => ({
     "video-1": ["https://filesamples.com/samples/video/mp4/sample_640x360.mp4"],
     "video-2": ["https://filesamples.com/samples/video/mp4/sample_960x540.mp4"],
     "video-3": ["https://filesamples.com/samples/video/mp4/sample_640x360.mp4"],
     "video-4": ["https://filesamples.com/samples/video/mp4/sample_960x540.mp4"],
-  };
+  }), []);
 
   // utility: check if a URL is reachable (HEAD with timeout)
   const checkUrlReachable = async (url: string, timeout = 3000) => {
@@ -334,7 +335,7 @@ export default function OtherSkills() {
       const res = await fetch(url, { method: "HEAD", signal: controller.signal });
       clearTimeout(id);
       return res.ok;
-    } catch (e) {
+    } catch {
       return false;
     }
   };
@@ -379,7 +380,7 @@ export default function OtherSkills() {
     return () => {
       mounted = false;
     };
-  }, [selected]);
+  }, [selected, videoMap, remoteVideoMap]);
 
   // sample skills for orbs
   const skillNames = ["Color Grading", "Sound Design", "Montage", "Kinetic Type", "AR", "Social"].slice(0, 6);

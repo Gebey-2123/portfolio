@@ -32,8 +32,7 @@ export default function About() {
       scale: 1,
       y: 0,
       transition: {
-        duration: 0.6,
-        ease: [0.34, 1.56, 0.64, 1] as any // Custom spring bounce
+        duration: 0.6
       }
     }
   };

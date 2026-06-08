@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { Mail } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 
