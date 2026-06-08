@@ -143,7 +143,8 @@ const SAMPLES: Record<SkillTab, SampleWork[]> = {
       accentColor: "#7CFC00",
       icon: <Megaphone size={28} />,
       link: "https://example.com/case/launch-amplify",
-      videoLocal: "/videos/marketing-1.mp4",
+      // updated to match uploaded file in public/videos/
+      videoLocal: "/videos/Digital Marketing.mp4",
       brief: "Optimized creatives for high CTR and low CPA.",
     },
   ],
