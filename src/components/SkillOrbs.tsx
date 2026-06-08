@@ -939,7 +939,7 @@ export default function SkillOrbs() {
               transition={{ duration: 0.5 }}
               className="font-mono text-[10px] md:text-xs tracking-[0.2em] text-cyan uppercase mb-2"
             >
-              Technical Arsenal
+              Technical Skills
             </motion.div>
             <motion.h2
               initial={{ opacity: 0, y: 15 }}

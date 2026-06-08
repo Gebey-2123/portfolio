@@ -14,7 +14,7 @@
 /out/
 
 # local video samples (do not commit large media files)
-/public/videos/
+# (removed to allow deployment when using Git LFS or intentional inclusion)
 
 # production
 /build
