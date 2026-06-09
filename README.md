@@ -9,12 +9,12 @@
 [![CI](https://img.shields.io/badge/ci-GitHub%20Actions-2088FF?logo=github)](https://github.com/Gebey-2123/portfolio/actions)
 
 
-# My Portfolio - Software Engineering & Cybersecurity
+# My Portfolio - Software Engineering
 
 Welcome to my digital workspace! This repository houses my portfolio, a showcase of my technical skills, passion projects, and ongoing journey in the tech industry.
 
 ## 🚀 About
-I am a Software Engineering and Cybersecurity student focused on building secure, scalable, and user-centric digital solutions. This portfolio represents my growth and the projects I’ve built to bridge the gap between complex backend logic and creative frontend design.
+I am a Software Engineering student focused on building secure, scalable, and user-centric digital solutions. This portfolio represents my growth and the projects I’ve built to bridge the gap between complex backend logic and creative frontend design.
 
 ## 🛠️ Technical Stack
 - **Web Development:** React, Next.js, HTML, CSS, JavaScript
@@ -26,11 +26,7 @@ Check out my live portfolio here: [https://portfolio-nace.vercel.app/](https://p
 
 ## 📈 What's Inside?
 - **E-commerce Applications:** Scalable platforms built with security in mind.
-- **Cybersecurity Projects:** Documentation of secure coding practices and system protection.
 - **UI/UX & Graphics:** Creative designs aimed at enhancing user experience.
-
-
-
 
 
 A deploy-ready personal portfolio showcasing Creative Ventures: Video Editing, Digital Marketing, and Content Creation. Built with Next.js, TypeScript and Tailwind CSS, and designed for fast local demos using playable MP4s stored in `public/videos/` (Git LFS recommended).
@@ -46,11 +42,17 @@ Add visual polish by including one or two screenshots. Place images under `publi
 Example (add these files under `public/screenshots/`):
 
 ```markdown
-![Hero screenshot](/screenshots/hero.png "Portfolio hero")
+!<img width="1587" height="814" alt="image" src="https://github.com/user-attachments/assets/4a81b895-ab59-4b61-b4ef-200341ac9340" />
+[<img width="1600" height="781" alt="image" src="https://github.com/user-attachments/assets/ac7e14c1-eb96-4b73-b70c-fa45576b71b4" />
+<img width="1599" height="766" alt="image" src="https://github.com/user-attachments/assets/6b508556-3249-4279-89c2-fcb99ea39865" />
+<img width="1600" height="767" alt="image" src="https://github.com/user-attachments/assets/dce005b1-d998-475e-999c-3ab189162e97" />
+<img width="1596" height="776" alt="image" src="https://github.com/user-attachments/assets/5c1fb74c-9421-4149-b04e-c6fb160eb3a2" />
+<img width="1600" height="772" alt="image" src="https://github.com/user-attachments/assets/9d5b04bd-86ab-4b3b-a2c7-02f027baae83" />
+<img width="1563" height="776" alt="image" src="https://github.com/user-attachments/assets/0dc07778-4aac-460e-8eda-f4e745b0fdb4" />
+Hero screenshot](/screenshots/hero.png "Portfolio hero")
 ![OtherSkills demo](/screenshots/otherskills.png "OtherSkills demo modal")
 ```
 
-I can add the images into the README for you once you upload them or tell me which screenshots to include.
 
 ---
 
