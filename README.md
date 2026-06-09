@@ -165,7 +165,9 @@ If you don't have `gh` installed I can provide the PR body text or help create t
 
 ## 🤝 Let's Connect
 I am always open to collaboration, feedback, and tech discussions.
-- **LinkedIn:** [Insert Your LinkedIn Profile Link]
+- **LinkedIn:** www.linkedin.com/in/
+gebey-gebre-063512415
+
 - **Email:** gebregebey@gmail.com
 
 ---
