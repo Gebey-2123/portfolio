@@ -31,7 +31,7 @@ const TABS: { id: SkillTab; label: string; icon: React.ReactNode; color: string 
 const SAMPLES: Record<SkillTab, SampleWork[]> = {
   video: [
     {
-      id: "video-1",
+      id: "video editing1",
       title: "Neon Teaser — Product Montage",
       description: "30s motion-cut montage with UI overlays and punch edits.",
       image:
@@ -45,7 +45,7 @@ const SAMPLES: Record<SkillTab, SampleWork[]> = {
       brief: "Mobile-first montage crafted for high completion and CTR.",
     },
     {
-      id: "video-2",
+      id: "video editing2",
       title: "Silent City — Micro Doc",
       description: "Cinematic micro-doc with layered ambiences and subtle grading.",
       image:
@@ -58,7 +58,7 @@ const SAMPLES: Record<SkillTab, SampleWork[]> = {
       brief: "3-minute festival-ready short focusing on mood and sound design.",
     },
     {
-      id: "video-3",
+      id: "video editing3",
       title: "Pulse Promo — Kinetic Type",
       description: "15s kinetic-typography promo optimized for vertical socials.",
       image:
@@ -71,7 +71,7 @@ const SAMPLES: Record<SkillTab, SampleWork[]> = {
       brief: "Tempo-synced type animations for short attention spans.",
     },
     {
-      id: "video-4",
+      id: "video editing4",
       title: "Lumen City — Experimental",
       description: "Generative particles blended with live-action for an urban mood piece.",
       image:
@@ -86,7 +86,7 @@ const SAMPLES: Record<SkillTab, SampleWork[]> = {
   ],
   marketing: [
     {
-      id: "marketing-1",
+      id: "Digital Marketing",
       title: "Street-to-Stream Funnel",
       description: "Geo-targeted short ad series to drive event sign-ups.",
       image:
@@ -135,7 +135,7 @@ const SAMPLES: Record<SkillTab, SampleWork[]> = {
     },
     // additional marketing 'best' sample with local video
     {
-      id: "marketing-5",
+      id: "Digital Marketingmarketing-5",
       title: "Launch Amplify — Paid Social Series",
       description: "High-conversion creative with iterative A/B tested hooks.",
       image: "https://images.unsplash.com/photo-1520975910218-7c3d5d5f8f3e?auto=format&fit=crop&q=80&w=1200",
