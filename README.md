@@ -1,4 +1,34 @@
 <!-- Polished README for GitHub landing page -->
+# My Portfolio - Software Engineering & Cybersecurity
+
+Welcome to my digital workspace! This repository houses my portfolio, a showcase of my technical skills, passion projects, and ongoing journey in the tech industry.
+
+## 🚀 About
+I am a Software Engineering and Cybersecurity student focused on building secure, scalable, and user-centric digital solutions. This portfolio represents my growth and the projects I’ve built to bridge the gap between complex backend logic and creative frontend design.
+
+## 🛠️ Technical Stack
+- **Web Development:** React, Next.js, HTML, CSS, JavaScript
+- **Deployment:** Vercel
+- **Focus Areas:** Full-Stack Architecture, Secure Coding, UI/UX Design
+
+## 🌐 Live Demo
+Check out my live portfolio here: [https://portfolio-nace.vercel.app/](https://portfolio-nace.vercel.app/)
+
+## 📈 What's Inside?
+- **E-commerce Applications:** Scalable platforms built with security in mind.
+- **Cybersecurity Projects:** Documentation of secure coding practices and system protection.
+- **UI/UX & Graphics:** Creative designs aimed at enhancing user experience.
+
+## 🤝 Let's Connect
+I am always open to collaboration, feedback, and tech discussions.
+- **LinkedIn:** [Insert Your LinkedIn Profile Link]
+- **Email:** gebregebey@gmail.com
+
+---
+*Built by Gebey | Learning, Building, and Growing.*
+
+
+
 
 # Portfolio — Creative Ventures
 
