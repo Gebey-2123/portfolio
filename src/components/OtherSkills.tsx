@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play, Film, Megaphone, FileText } from "lucide-react";
 
 type SkillTab = "video" | "marketing" | "content";
-
 type Metric = { label: string; value: string };
 
 type SampleWork = {
