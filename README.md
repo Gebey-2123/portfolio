@@ -1,4 +1,14 @@
 <!-- Polished README for GitHub landing page -->
+
+# Portfolio — Creative Ventures
+
+[![Vercel](https://img.shields.io/badge/deploy-vercel-000000?logo=vercel)](https://vercel.com)
+[![Next.js](https://img.shields.io/badge/framework-Next.js-000000?logo=next.js)](https://nextjs.org)
+[![Tailwind](https://img.shields.io/badge/style-Tailwind%20CSS-06B6D4?logo=tailwindcss)](https://tailwindcss.com)
+[![TypeScript](https://img.shields.io/badge/lang-TypeScript-3178C6?logo=typescript)](https://www.typescriptlang.org)
+[![CI](https://img.shields.io/badge/ci-GitHub%20Actions-2088FF?logo=github)](https://github.com/Gebey-2123/portfolio/actions)
+
+
 # My Portfolio - Software Engineering & Cybersecurity
 
 Welcome to my digital workspace! This repository houses my portfolio, a showcase of my technical skills, passion projects, and ongoing journey in the tech industry.
@@ -19,24 +29,9 @@ Check out my live portfolio here: [https://portfolio-nace.vercel.app/](https://p
 - **Cybersecurity Projects:** Documentation of secure coding practices and system protection.
 - **UI/UX & Graphics:** Creative designs aimed at enhancing user experience.
 
-## 🤝 Let's Connect
-I am always open to collaboration, feedback, and tech discussions.
-- **LinkedIn:** [Insert Your LinkedIn Profile Link]
-- **Email:** gebregebey@gmail.com
-
----
-*Built by Gebey | Learning, Building, and Growing.*
 
 
 
-
-# Portfolio — Creative Ventures
-
-[![Vercel](https://img.shields.io/badge/deploy-vercel-000000?logo=vercel)](https://vercel.com)
-[![Next.js](https://img.shields.io/badge/framework-Next.js-000000?logo=next.js)](https://nextjs.org)
-[![Tailwind](https://img.shields.io/badge/style-Tailwind%20CSS-06B6D4?logo=tailwindcss)](https://tailwindcss.com)
-[![TypeScript](https://img.shields.io/badge/lang-TypeScript-3178C6?logo=typescript)](https://www.typescriptlang.org)
-[![CI](https://img.shields.io/badge/ci-GitHub%20Actions-2088FF?logo=github)](https://github.com/Gebey-2123/portfolio/actions)
 
 A deploy-ready personal portfolio showcasing Creative Ventures: Video Editing, Digital Marketing, and Content Creation. Built with Next.js, TypeScript and Tailwind CSS, and designed for fast local demos using playable MP4s stored in `public/videos/` (Git LFS recommended).
 
@@ -168,4 +163,11 @@ If you don't have `gh` installed I can provide the PR body text or help create t
 - If `git push` fails for large packs, use Git LFS or increase `git config http.postBuffer` temporarily.
 
 
+## 🤝 Let's Connect
+I am always open to collaboration, feedback, and tech discussions.
+- **LinkedIn:** [Insert Your LinkedIn Profile Link]
+- **Email:** gebregebey@gmail.com
+
+---
+*Built by Gebey | Learning, Building, and Growing.*
 
