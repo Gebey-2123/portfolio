@@ -32,7 +32,7 @@ He specializes in building clean-code applications, efficient algorithms, and fu
 4. **Relentless Learner**: Actively practices algorithmic problem solving and stays up to date with modern React & Next.js frameworks.`,
   contact: `You can connect with Gebey directly via:
 - **Email**: [gebregebey@gmail.com](mailto:gebregebey@gmail.com)
-- **GitHub**: [github.com/gebregebey](https://github.com/gebregebey)
+ - **GitHub**: [github.com/Gebey-2123](https://github.com/Gebey-2123)
 - **LinkedIn**: [linkedin.com/in/gebregebey](https://linkedin.com/in/gebregebey)
 
 Feel free to fill out the contact form on this page to shoot him a direct message!`,

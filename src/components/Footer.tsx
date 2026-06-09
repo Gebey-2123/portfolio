@@ -70,7 +70,7 @@ export default function Footer() {
         {/* Social Icons */}
         <div className="flex gap-5 items-center">
           <a
-            href="https://github.com/gebregebey"
+            href="https://github.com/Gebey-2123"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#3d494c] hover:text-cyan transition-colors group"

@@ -125,7 +125,7 @@ export default function Navbar() {
             ))}
             <div className="flex items-center gap-4.5 mr-2">
               <a
-                href="https://github.com/gebregebey"
+                href="https://github.com/Gebey-2123"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-on-muted hover:text-cyan transition-colors group"
@@ -204,7 +204,7 @@ export default function Navbar() {
             </a>
             <div className="flex justify-center gap-6 mt-4 pt-4 border-t border-white/5">
               <a
-                href="https://github.com/gebregebey"
+                href="https://github.com/Gebey-2123"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-on-muted hover:text-cyan transition-colors group"

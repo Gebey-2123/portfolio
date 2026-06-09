@@ -27,7 +27,7 @@ const projects: Project[] = [
     description: "A full-stack web application for managing student records, grades, attendance, and academic reports. Features administrative and student portals with role-based access control.",
     tags: ["PHP", "MySQL", "JavaScript", "HTML/CSS"],
     category: "FEATURED PROJECT",
-    githubUrl: "https://github.com/gebregebey",
+    githubUrl: "https://github.com/Gebey-2123",
     liveUrl: "#",
     icon: <Database className="w-5 h-5 text-cyan" />,
   },
@@ -36,7 +36,7 @@ const projects: Project[] = [
     description: "A secure digital voting platform designed with role-based administrative dashboards, encrypted ballot recording, and real-time result tabulation.",
     tags: ["PHP", "MySQL", "JavaScript", "HTML/CSS"],
     category: "WEB APPLICATION",
-    githubUrl: "https://github.com/gebregebey",
+    githubUrl: "https://github.com/Gebey-2123",
     liveUrl: "#",
     icon: <Globe className="w-5 h-5 text-violet" />,
   },
@@ -45,7 +45,7 @@ const projects: Project[] = [
     description: "A complete online storefront with product listings, dynamic cart management, database synchronization, checkout pipeline, and a dedicated store manager dashboard.",
     tags: ["PHP", "MySQL", "Bootstrap", "JS"],
     category: "WEB APPLICATION",
-    githubUrl: "https://github.com/gebregebey",
+    githubUrl: "https://github.com/Gebey-2123",
     liveUrl: "#",
     icon: <Globe className="w-5 h-5 text-amber" />,
   },
@@ -54,7 +54,7 @@ const projects: Project[] = [
     description: "A comprehensive portal for university students and coordinators to manage internship placements, track progress, and submit final evaluations.",
     tags: ["Java", "MySQL", "JavaScript", "HTML/CSS"],
     category: "FULL-STACK PROJECT",
-    githubUrl: "https://github.com/gebregebey",
+    githubUrl: "https://github.com/Gebey-2123",
     icon: <Layers className="w-5 h-5 text-cyan" />,
   },
   {
@@ -62,7 +62,7 @@ const projects: Project[] = [
     description: "A Java Swing application enabling catalog lookups, book check-outs, and transaction audits. Implements efficient search algorithms and data structures.",
     tags: ["Java", "OOP", "Data Structures", "Swing UI"],
     category: "JAVA PROJECT",
-    githubUrl: "https://github.com/gebregebey",
+    githubUrl: "https://github.com/Gebey-2123",
     icon: <BookOpen className="w-5 h-5 text-violet" />,
   },
 ];
@@ -135,7 +135,7 @@ export default function Projects() {
               </p>
             </div>
             <a
-              href="https://github.com/gebregebey"
+              href="https://github.com/Gebey-2123"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-secondary text-[11px] px-5 py-2 flex items-center gap-1 font-mono uppercase"
