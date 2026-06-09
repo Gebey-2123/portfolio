@@ -384,7 +384,7 @@ function FoleyMixerDemo() {
     if (tracks.foley) amplitude += 12;
     if (!isPlaying) amplitude = 0;
 
-    let points = [];
+    const points = [];
     for (let i = 0; i <= 100; i++) {
       const x = i * 2.8;
       const y = 50 +
@@ -992,7 +992,7 @@ function NewsletterReaderDemo() {
         </div>
 
         <p className="mb-2 text-white/80">
-          Tailwind CSS uses PurgeCSS techniques under the hood, but dynamic template compilation at runtime is a common performance pitfall. Let's optimize it.
+          Tailwind CSS uses PurgeCSS techniques under the hood, but dynamic template compilation at runtime is a common performance pitfall. Let&apos;s optimize it.
         </p>
 
         <pre className="bg-[#070d1a] border border-white/10 p-2 rounded text-[8px] leading-tight my-2 text-glow text-cyan-dim overflow-x-auto">
