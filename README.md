@@ -137,13 +137,5 @@ If you don't have `gh` installed I can provide the PR body text or help create t
 - If the player shows a placeholder instead of a video on GitHub, run `git lfs pull` locally to download actual media objects.
 - If `git push` fails for large packs, use Git LFS or increase `git config http.postBuffer` temporarily.
 
----
 
-## Need help?
 
-I can:
-- Add badges and screenshots into the README once you upload images to `public/screenshots/`.
-- Create the feature branch and open a PR draft for these docs changes (I will show the `gh` command).
-- Add a small `CONTRIBUTING` section inside `README.md` (done) or keep it separate (we already have `CONTRIBUTING.md`).
-
-Tell me which screenshots and badges you want and whether I should create the PR draft for you.
