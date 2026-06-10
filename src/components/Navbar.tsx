@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { Menu, X, ArrowUpRight } from "lucide-react";
-import { GithubIcon, LinkedinIcon, ALL_SOCIAL_LINKS, SocialLinkItem, SocialIcon } from "./SocialIcons"; // Import from new file
+import { useEffect, useState } from "react";
+import { Menu, X, ArrowUpRight } from "lucide-react"; // Keep Mail for email link
+import { GithubIcon, LinkedinIcon, ALL_SOCIAL_LINKS, SocialIcon } from "./SocialIcons"; // Import from new file
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
@@ -16,7 +16,7 @@ const navItems = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
+  const [activeSection, setActiveSection] = useState(""); // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
   useEffect(() => {
     const handleScroll = () => {
