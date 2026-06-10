@@ -112,6 +112,32 @@ export default function About() {
           </p>
 
           {/* Chips */}
+          {(() => {
+            const badges = [
+              { id: "location", icon: <MapPin className="w-3.5 h-3.5 text-cyan" />, text: "📍 Woldia, Ethiopia" },
+              { id: "university", icon: <GraduationCap className="w-3.5 h-3.5 text-violet" />, text: "🎓 Woldia University" },
+              { id: "briefcase", icon: <Briefcase className="w-3.5 h-3.5 text-cyan" />, text: "" },
+              { id: "role", icon: <Rocket className="w-3.5 h-3.5 text-amber" />, text: "🚀 Full-Stack Dev" },
+            ];
+            return (
+              <motion.div
+                className="flex flex-wrap gap-2.5 mb-8"
+                variants={{
+                  hidden: {},
+                  visible: { transition: { staggerChildren: 0.1 } }
+                }}
+              >
+                {badges.map(badge => (
+                  <motion.span key={badge.id} variants={badgeVariants} className="chip flex items-center gap-1.5">
+                    {badge.icon}
+                    {badge.text}
+                  </motion.span>
+                ))}
+              </motion.div>
+            );
+          })()}
+
+          {/* Chips */}
           <motion.div
             className="flex flex-wrap gap-2.5 mb-8"
             variants={{
@@ -119,22 +145,6 @@ export default function About() {
               visible: { transition: { staggerChildren: 0.1 } }
             }}
           >
-            <motion.span variants={badgeVariants} className="chip flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-cyan" />
-              📍 Woldia, Ethiopia
-            </motion.span>
-            <motion.span variants={badgeVariants} className="chip flex items-center gap-1.5">
-              <GraduationCap className="w-3.5 h-3.5 text-violet" />
-              🎓 Woldia University
-            </motion.span>
-            <motion.span variants={badgeVariants} className="chip flex items-center gap-1.5">
-              <Briefcase className="w-3.5 h-3.5 text-cyan" />
-
-            </motion.span>
-            <motion.span variants={badgeVariants} className="chip flex items-center gap-1.5">
-              <Rocket className="w-3.5 h-3.5 text-amber" />
-              🚀 Full-Stack Dev
-            </motion.span>
           </motion.div>
 
           <div>
