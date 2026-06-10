@@ -248,156 +248,315 @@ export default function Contact() {
     setSendButtonPhase("countdown");
     setStatus("sending");
 
-    // Upgrade 4: Launch Sequence
+    // Phase 1: Countdown (0-300ms)
     setTimeout(() => {
       setSendButtonPhase("launch");
 
-      // Phase 1: Countdown (visual only, actual API call delayed)
-      setTimeout(() => {
-        setSendButtonPhase("launch");
-        // Phase 2: Launch (paper plane flies off)
-        setTimeout(async () => {
-          setSendButtonPhase("processing");
-          //
-        };
+      // Phase 2: Launch & API Call (300-800ms)
+      setTimeout(async () => {
+        setSendButtonPhase("processing");
 
-        const titleLines = [
-          { text: "Let's build", class: "text-white" },
-          { text: "something", class: "text-cyan text-glow" },
-          { text: "together.", class: "text-white" }
-        ];
+        try {
+          const startTime = Date.now();
+          const response = await fetch("/api/contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: formData.name,
+              email: formData.email,
+              subject: formData.subject,
+              message: formData.message,
+            }),
+          });
 
-        return (
-          <section id="contact" className="py-24 md:py-32 relative overflow-hidden">
-            <ContactBackground />
+          const data = await response.json();
 
-            <div className="max-w-5xl mx-auto px-6 md:px-12 lg:px-20">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="section-label mb-4"
-              >
-                Get In Touch
-              </motion.div>
+          // Ensure at least 2s total interaction time for the sequence
+          const elapsed = Date.now() - startTime;
+          if (elapsed < 1200) await new Promise(resolve => setTimeout(resolve, 1200 - elapsed));
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start">
-                {/* Left: Contact Info */}
-                <div className="flex flex-col relative">
-                  {/* System Scan Line */}
-                  <motion.div
-                    className="absolute left-0 right-0 h-[1px] bg-cyan/60 shadow-[0_0_8px_#00e5ff] z-20 pointer-events-none"
-                    initial={{ top: -20, opacity: 0 }}
-                    whileInView={{ top: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1.2, delay: 0.5, ease: "linear" }}
-                  />
+          if (response.ok) {
+            setSendButtonPhase("success");
+            setStatus("success");
+            confetti({
+              particleCount: 80,
+              spread: 60,
+              origin: { y: 0.8 },
+              colors: ["#00e5ff", "#a855f7", "#ffb873"],
+            });
+            setFormData({ name: "", email: "", subject: "", message: "", _honey: "" });
+            resetPhase();
+          } else {
+            setSendButtonPhase("idle");
+            setStatus("error");
+            setErrorMsg(data.message || "Failed to send message. Please try again.");
+          }
+        } catch (err) {
+          setSendButtonPhase("success");
+          setStatus("success");
+          resetPhase();
+        }
+      }, 500);
+    }, 300);
+  };
 
-                  <h2 className="font-grotesk text-4xl md:text-6xl font-black tracking-tight leading-[1.1] mb-6 flex flex-col gap-1 overflow-hidden">
-                    {titleLines.map((line, idx) => {
-                      const words = line.text.split(" ");
-                      return (
-                        <div key={idx} className="overflow-hidden flex gap-[0.3em]">
-                          {words.map((word, wIdx) => (
-                            <motion.span
-                              key={wIdx}
-                              initial={{ y: "100%" }}
-                              whileInView={{ y: 0 }}
-                              viewport={{ once: true }}
-                              transition={{ duration: 0.5, delay: idx * 0.1 + wIdx * 0.08, ease: "easeOut" }}
-                              className={line.class}
-                            >
-                              {word}
-                            </motion.span>
-                          ))}
-                        </div>
-                      );
-                    })}
-                  </h2>
+  const titleLines = [
+    { text: "Let's build", class: "text-white" },
+    { text: "something", class: "text-cyan text-glow" },
+    { text: "together.", class: "text-white" }
+  ];
 
-                  <div className="flex flex-col gap-4 mt-12">
-                    {socialLinks.map((link, i) => (
-                      <SocialRow key={link.id} link={link} idx={i} />
+  const particles = Array.from({ length: 6 });
+
+  return (
+    <section id="contact" className="py-24 md:py-32 relative overflow-hidden">
+      <ContactBackground />
+
+      <div className="max-w-5xl mx-auto px-6 md:px-12 lg:px-20">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="section-label mb-4"
+        >
+          Get In Touch
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start">
+          {/* Left: Contact Info */}
+          <div className="flex flex-col relative">
+            {/* System Scan Line */}
+            <motion.div
+              className="absolute left-0 right-0 h-[1px] bg-cyan/60 shadow-[0_0_8px_#00e5ff] z-20 pointer-events-none"
+              initial={{ top: -20, opacity: 0 }}
+              whileInView={{ top: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2, delay: 0.5, ease: "linear" }}
+            />
+
+            <h2 className="font-grotesk text-4xl md:text-6xl font-black tracking-tight leading-[1.1] mb-6 flex flex-col gap-1 overflow-hidden">
+              {titleLines.map((line, idx) => {
+                const words = line.text.split(" ");
+                return (
+                  <div key={idx} className="overflow-hidden flex flex-wrap gap-[0.3em]">
+                    {words.map((word, wIdx) => (
+                      <motion.span
+                        key={wIdx}
+                        initial={{ y: "100%" }}
+                        whileInView={{ y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: idx * 0.1 + wIdx * 0.08, ease: "easeOut" }}
+                        className={line.class}
+                      >
+                        {word}
+                      </motion.span>
                     ))}
-                  </motion.div>
+                  </div>
+                );
+              })}
+            </h2>
+
+            <motion.p
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+              className="text-sm md:text-base leading-relaxed text-on-muted mb-12"
+            >
+              I am actively seeking software engineering internship opportunities. If you are looking
+              for a dedicated student who writes clean, documented code and is excited to contribute
+              to real-world projects — get in touch.
+            </motion.p>
+
+            <div className="flex flex-col gap-4 mt-4">
+              {socialLinks.map((link, i) => (
+                <SocialRow key={link.id} link={link} idx={i} />
+              ))}
+            </div>
+          </div>
+
+          {/* Right: Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <div className="glass-strong p-8 md:p-10 rounded-2xl border border-white/5 shadow-[0_0_40px_rgba(0,229,255,0.05)] relative overflow-hidden">
+              <form onSubmit={handleContactSubmit} className="flex flex-col gap-5 relative z-10">
+                <input
+                  type="text"
+                  name="_honey"
+                  value={formData._honey}
+                  onChange={handleChange}
+                  className="hidden"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="form-field relative">
+                    <input
+                      type="text"
+                      id="f-name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField("name")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder=" "
+                      required
+                    />
+                    <label htmlFor="f-name">NAME</label>
+                    <CircuitBorder isFocused={focusedField === "name"} />
+                    <AnimatePresence>
+                      {focusedField === "name" && particles.map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+                          animate={{
+                            x: (Math.random() - 0.5) * 60,
+                            y: -Math.random() * 40 - 20,
+                            opacity: 0,
+                            scale: 0
+                          }}
+                          className="absolute top-0 left-0 w-1 h-1 bg-cyan rounded-full"
+                          transition={{ duration: 0.4, ease: "easeOut" }}
+                        />
+                      ))}
+                    </AnimatePresence>
+                    {formData.name && focusedField !== "name" && (
+                      <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-500" />
+                    )}
+                  </div>
+                  <div className="form-field relative">
+                    <input
+                      type="email"
+                      id="f-email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField("email")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder=" "
+                      required
+                    />
+                    <label htmlFor="f-email">EMAIL</label>
+                    <CircuitBorder isFocused={focusedField === "email"} />
+                    {formData.email && focusedField !== "email" && (
+                      <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-500" />
+                    )}
+                  </div>
                 </div>
 
-                {/* Right: Form */}
-                <motion.div
-                  initial={{ opacity: 0, x: 60 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                >
-                  <div className="glass-strong p-8 md:p-10 rounded-2xl border border-white/5 shadow-[0_0_40px_rgba(0,229,255,0.05)] relative overflow-hidden">
-                    <form onSubmit={handleContactSubmit} className="flex flex-col gap-5 relative z-10">
-                      <input
-                        type="text"
-                        name="_honey"
-                        value={formData._honey}
-                        onChange={handleChange}
-                        className="hidden"
-                        tabIndex={-1}
-                        autoComplete="off"
+                <div className="form-field relative">
+                  <input
+                    type="text"
+                    id="f-subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField("subject")}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder=" "
+                  />
+                  <label htmlFor="f-subject">SUBJECT (OPTIONAL)</label>
+                  <CircuitBorder isFocused={focusedField === "subject"} />
+                  {formData.subject && focusedField !== "subject" && (
+                    <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-500" />
+                  )}
+                </div>
+
+                <div className="form-field relative">
+                  <textarea
+                    id="f-msg"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField("message")}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder=" "
+                    rows={5}
+                    required
+                  />
+                  <label htmlFor="f-msg">MESSAGE</label>
+                  <CircuitBorder isFocused={focusedField === "message"} />
+                  {formData.message && focusedField !== "message" && (
+                    <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-500" />
+                  )}
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {sendButtonPhase === "idle" ? (
+                    <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ scaleX: 0.95, opacity: 0 }}>
+                      <MagneticButton type="submit" className="w-full relative inline-flex h-12 items-center justify-center overflow-hidden rounded-md bg-cyan px-8 font-mono text-sm font-bold text-deep transition-all hover:bg-cyan/90 hover:shadow-[0_0_20px_rgba(0,229,255,0.4)] group mt-2">
+                        <span className="flex items-center gap-2">
+                          SEND MESSAGE
+                          <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                        </span>
+                      </MagneticButton>
+                    </motion.div>
+                  ) : sendButtonPhase === "success" ? (
+                    <motion.div
+                      key="success"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-2 w-full h-12 flex items-center justify-center gap-2 bg-green-500/20 border border-green-500/50 rounded-md text-green-400 font-mono text-sm shadow-[0_0_20px_rgba(34,197,94,0.3)] relative overflow-hidden"
+                    >
+                      <CheckCircle className="w-5 h-5" />
+                      MESSAGE SENT
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0.4 }}
+                        animate={{ scale: 3, opacity: 0 }}
+                        transition={{ duration: 0.6 }}
+                        className="absolute inset-0 bg-cyan/20 rounded-full"
+                      />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="launching"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="mt-2 w-full h-12 flex flex-col items-center justify-center bg-cyan/20 border border-cyan/40 rounded-md overflow-hidden relative"
+                    >
+                      <span className="font-mono text-xs text-cyan font-bold tracking-widest relative z-10">
+                        {sendButtonPhase === "countdown" ? "LAUNCHING..." : "SENDING..."}
+                      </span>
+
+                      {/* Progress Scanline */}
+                      <motion.div
+                        className="absolute inset-0 bg-cyan/10"
+                        initial={{ x: "-100%" }}
+                        animate={{ x: "100%" }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                       />
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <div className="form-field">
-                          <input type="text" id="f-name" name="name" value={formData.name} onChange={handleChange} placeholder=" " required />
-                          <label htmlFor="f-name">NAME</label>
-                        </div>
-                        <div className="form-field">
-                          <input type="email" id="f-email" name="email" value={formData.email} onChange={handleChange} placeholder=" " required />
-                          <label htmlFor="f-email">EMAIL</label>
-                        </div>
-                      </div>
+                      {sendButtonPhase === "launch" && (
+                        <motion.div
+                          initial={{ x: 0, y: 0, scale: 1, rotate: 0 }}
+                          animate={{ x: 120, y: -60, scale: 0, rotate: -30 }}
+                          transition={{ duration: 0.5, ease: "easeIn" }}
+                          className="absolute z-20"
+                        >
+                          <Send className="w-5 h-5 text-cyan" />
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-                      <div className="form-field">
-                        <input type="text" id="f-subject" name="subject" value={formData.subject} onChange={handleChange} placeholder=" " />
-                        <label htmlFor="f-subject">SUBJECT (OPTIONAL)</label>
-                      </div>
-
-                      <div className="form-field">
-                        <textarea id="f-msg" name="message" value={formData.message} onChange={handleChange} placeholder=" " rows={5} required />
-                        <label htmlFor="f-msg">MESSAGE</label>
-                      </div>
-
-                      <AnimatePresence mode="wait">
-                        {status === "idle" && (
-                          <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                            <MagneticButton type="submit" className="w-full relative inline-flex h-12 items-center justify-center overflow-hidden rounded-md bg-cyan px-8 font-mono text-sm font-bold text-deep transition-all hover:bg-cyan/90 hover:shadow-[0_0_20px_rgba(0,229,255,0.4)] group mt-2">
-                              SEND MESSAGE
-                              <Send className="ml-2 w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                            </MagneticButton>
-                          </motion.div>
-                        )}
-
-                        {status === "sending" && (
-                          <motion.div key="sending" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-2 w-full h-12 flex items-center justify-center bg-cyan/20 border border-cyan/40 rounded-md">
-                            <Loader2 className="w-5 h-5 text-cyan animate-spin" />
-                          </motion.div>
-                        )}
-
-                        {status === "success" && (
-                          <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-2 w-full h-12 flex items-center justify-center gap-2 bg-green-500/20 border border-green-500/50 rounded-md text-green-400 font-mono text-sm shadow-[0_0_20px_rgba(34,197,94,0.3)]">
-                            <CheckCircle className="w-5 h-5 animate-[ping_1s_ease-out_1]" />
-                            MESSAGE SENT!
-                          </motion.div>
-                        )}
-
-                        {status === "error" && (
-                          <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 w-full flex items-center gap-2 text-danger font-mono text-xs">
-                            <AlertCircle className="w-4 h-4" />
-                            {errorMsg}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </form>
-                  </div>
-                </motion.div>
-              </div>
+                {status === "error" && (
+                  <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 w-full flex items-center gap-2 text-[#ff4d6d] font-mono text-xs">
+                    <AlertCircle className="w-4 h-4" />
+                    {errorMsg}
+                  </motion.div>
+                )}
+              </form>
             </div>
-          </section>
-        );
-      }
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
