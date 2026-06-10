@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useSpring, useMotionValue, useInView } from "framer-motion";
-import { Mail, Send, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
-import { GithubIcon, LinkedinIcon, InstagramIcon, TelegramIcon, TiktokIcon, ALL_SOCIAL_LINKS, SocialLinkItem, SocialIcon } from "./SocialIcons"; // Import from new file
+import { motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
+import { Send, CheckCircle, AlertCircle } from "lucide-react";
+import { ALL_SOCIAL_LINKS } from "./SocialIcons"; // Import from new file
 import confetti from "canvas-confetti";
 import MagneticButton from "./MagneticButton";
 
@@ -71,10 +71,23 @@ const ContactBackground = () => {
 // --- Social Link Data (for easier mapping) ---
 const socialLinks = ALL_SOCIAL_LINKS; // Use the centralized social links
 
+// CircuitBorder component for form inputs
+const CircuitBorder = ({ isFocused }: { isFocused: boolean }) => (
+  <svg className="absolute inset-0 w-full h-full pointer-events-none" fill="none">
+    <motion.rect
+      x="0.5" y="0.5" width="100%" height="100%" rx="8"
+      stroke="#00e5ff" strokeWidth="1"
+      initial={{ pathLength: 0, opacity: 0 }}
+      animate={{ pathLength: isFocused ? 1 : 0, opacity: isFocused ? 1 : 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+    />
+  </svg>
+);
+
 const SocialRow = ({ link, idx }: { link: typeof socialLinks[0], idx: number }) => {
-  const mouseX = useMotionValue(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const mouseX = useMotionValue(0); // Used for magnetic effect, but not directly in JSX
   const mouseY = useMotionValue(0);
-  // const springX = useSpring(mouseX, { stiffness: 100, damping: 15 }); // Removed as it was unused
   const springY = useSpring(mouseY, { stiffness: 100, damping: 15 });
   const [isHovered, setIsHovered] = useState(false);
 
@@ -201,7 +214,7 @@ export default function Contact() {
             setErrorMsg(data.message || "Failed to send message. Please try again.");
           }
         } catch (err) {
-          // console.error(err); // Log the error if needed, otherwise it's unused
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           setStatus("success");
           resetPhase();
         }
