@@ -1,5 +1,5 @@
 import React from "react";
-import { Mail } from "lucide-react";
+import { Mail } from "lucide-react"; // Mail icon is used here for the email link
 
 export const GithubIcon = ({ className }: { className?: string }) => (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
