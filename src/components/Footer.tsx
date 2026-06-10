@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useMemo } from "react";
-import { Mail } from "lucide-react";
-import { GithubIcon, LinkedinIcon, InstagramIcon, TelegramIcon, TiktokIcon, ALL_SOCIAL_LINKS, SocialLinkItem, SocialIcon } from "./SocialIcons"; // Import from new file
+import { useRef } from "react";
+import { ALL_SOCIAL_LINKS, SocialIcon } from "./SocialIcons"; // Import from new file
 import { motion, useInView } from "framer-motion";
 
-const footerLinks = ALL_SOCIAL_LINKS; // Use the centralized social links
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const footerLinks = ALL_SOCIAL_LINKS; // This is used in the JSX below, but ESLint might flag it as unused if not directly destructured.
 
 const TypewriterText = ({ text }: { text: string }) => {
   const ref = useRef(null);
@@ -57,58 +57,18 @@ export default function Footer() {
 
         {/* Social Icons */}
         <div className="flex gap-5 items-center">
-          <a
-            href="https://github.com/Gebey-2123"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#3d494c] hover:text-cyan transition-colors group"
-            title="GitHub"
-          >
-            <GithubIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-          </a>
-          <a
-            href="https://linkedin.com/in/gebregebey"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#3d494c] hover:text-cyan transition-colors group"
-            title="LinkedIn"
-          >
-            <LinkedinIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-          </a>
-          <a
-            href="https://instagram.com/gigi1232073"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#3d494c] hover:text-cyan transition-colors group"
-            title="Instagram"
-          >
-            <InstagramIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-          </a>
-          <a
-            href="https://t.me/GebeyG"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#3d494c] hover:text-cyan transition-colors group"
-            title="Telegram"
-          >
-            <TelegramIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-          </a>
-          <a
-            href="https://tiktok.com/@gebregebey"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#3d494c] hover:text-cyan transition-colors group"
-            title="TikTok"
-          >
-            <TiktokIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-          </a>
-          <a
-            href="mailto:gebregebey@gmail.com"
-            className="text-[#3d494c] hover:text-cyan transition-colors group"
-            title="Email"
-          >
-            <Mail className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-          </a>
+          {ALL_SOCIAL_LINKS.map((link) => (
+            <a
+              key={link.id}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#3d494c] hover:text-cyan transition-colors group"
+              title={link.label}
+            >
+              <SocialIcon link={link} className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
+            </a>
+          ))}
         </div>
       </div>
     </footer>
