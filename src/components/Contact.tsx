@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import { motion, AnimatePresence, useSpring, useMotionValue, useInView } from "framer-motion";
 import { Mail, Send, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 import MagneticButton from "./MagneticButton";
 
 const GithubIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
     <path d="M9 18c-4.51 2-5-2-7-2" />
   </svg>
@@ -42,6 +42,174 @@ const TiktokIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// --- Background Connection Nodes ---
+const ContactBackground = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouse = useRef({ x: -1000, y: -1000 });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let w: number, h: number;
+    const particles: { x: number; y: number; vx: number; vy: number }[] = [];
+    const count = 20;
+
+    const resize = () => {
+      w = canvas.width = canvas.offsetWidth;
+      h = canvas.height = canvas.offsetHeight;
+    };
+    resize();
+
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+      });
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach((p, i) => {
+        p.x = (p.x + p.vx + w) % w;
+        p.y = (p.y + p.vy + h) % h;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0, 229, 255, 0.15)";
+        ctx.fill();
+
+        for (let j = i + 1; j < count; j++) {
+          const p2 = particles[j];
+          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(0, 229, 255, ${0.06 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      });
+      requestAnimationFrame(animate);
+    };
+    animate();
+  }, []);
+
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />;
+};
+
+// --- Social Link Data (for easier mapping) ---
+const socialLinks = [
+  {
+    id: "email",
+    href: "mailto:gebregebey@gmail.com",
+    label: "Email",
+    icon: Mail,
+    color: "cyan"
+  },
+  {
+    id: "instagram",
+    href: "https://instagram.com/gigi1232073",
+    label: "Instagram",
+    icon: InstagramIcon,
+    color: "cyan"
+  },
+  {
+    id: "telegram",
+    href: "https://t.me/GebeyG",
+    label: "Telegram",
+    icon: TelegramIcon,
+    color: "cyan"
+  },
+  {
+    id: "tiktok",
+    href: "https://tiktok.com/@gebregebey",
+    label: "TikTok",
+    icon: TiktokIcon,
+    color: "cyan"
+  },
+  {
+    id: "github",
+    href: "https://github.com/Gebey-2123",
+    label: "GitHub",
+    icon: GithubIcon,
+    color: "cyan"
+  },
+  {
+    id: "linkedin",
+    href: "https://linkedin.com/in/gebregebey",
+    label: "LinkedIn",
+    icon: LinkedinIcon,
+    color: "cyan"
+  },
+];
+// --- End Social Link Data ---
+
+const CircuitBorder = ({ isFocused }: { isFocused: boolean }) => (
+  <svg className="absolute inset-0 w-full h-full pointer-events-none" fill="none">
+    <motion.rect
+      x="0.5" y="0.5" width="100%" height="100%" rx="8"
+      stroke="#00e5ff" strokeWidth="1"
+      initial={{ pathLength: 0, opacity: 0 }}
+      animate={{ pathLength: isFocused ? 1 : 0, opacity: isFocused ? 1 : 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+    />
+  </svg>
+);
+
+const SocialRow = ({ link, idx }: { link: typeof socialLinks[0], idx: number }) => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 100, damping: 15 });
+  const springY = useSpring(mouseY, { stiffness: 100, damping: 15 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerY = rect.top + rect.height / 2;
+    mouseY.set((e.clientY - centerY) * 0.12);
+  };
+
+  return (
+    <motion.a
+      href={link.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, x: -40 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: 0.4 + idx * 0.1, ease: [0.34, 1.56, 0.64, 1] }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => { setIsHovered(false); mouseY.set(0); }}
+      style={{ y: springY }}
+      className="flex items-center gap-4 group relative py-2"
+    >
+      {/* Signal Wave */}
+      <motion.div
+        className="absolute left-12 right-0 h-[1px] bg-cyan/30 shadow-[0_0_8px_#00e5ff]"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={{ scaleX: isHovered ? 1 : 0, opacity: isHovered ? [0, 1, 0] : 0 }}
+        transition={{ duration: 0.5 }}
+        style={{ originX: 0 }}
+      />
+
+      <div className={`w-12 h-12 rounded-xl bg-cyan/5 border border-cyan/15 group-hover:border-cyan/50 flex items-center justify-center text-cyan transition-all duration-300 relative`}>
+        <link.icon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg] z-10" />
+        <div className="absolute inset-0 rounded-xl animate-pulse bg-cyan/5 opacity-50" style={{ animationDelay: `${idx * 0.5}s` }} />
+      </div>
+      <span className="font-mono text-sm md:text-base text-on-muted group-hover:text-cyan group-hover:translate-x-1.5 transition-all duration-300">
+        {link.label}
+      </span>
+    </motion.a>
+  );
+};
+
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
@@ -53,270 +221,183 @@ export default function Contact() {
 
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [sendButtonPhase, setSendButtonPhase] = useState<"idle" | "countdown" | "launch" | "processing" | "success">("idle");
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const resetPhase = () => {
+    setTimeout(() => {
+      setSendButtonPhase("idle");
+      setStatus("idle");
+    }, 3000);
+  };
+
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (status === "sending") return;
+    if (sendButtonPhase !== "idle") return;
 
     if (formData._honey) {
       setStatus("success");
       return;
     }
 
+    setSendButtonPhase("countdown");
     setStatus("sending");
-    setErrorMsg("");
 
-    // Simulate sending for the spinner animation
-    setTimeout(async () => {
-      try {
-        const response = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            subject: formData.subject,
-            message: formData.message,
-          }),
-        });
+    // Upgrade 4: Launch Sequence
+    setTimeout(() => {
+      setSendButtonPhase("launch");
 
-        const data = await response.json();
+      // Phase 1: Countdown (visual only, actual API call delayed)
+      setTimeout(() => {
+        setSendButtonPhase("launch");
+        // Phase 2: Launch (paper plane flies off)
+        setTimeout(async () => {
+          setSendButtonPhase("processing");
+          //
+        };
 
-        if (response.ok) {
-          setStatus("success");
-          confetti({
-            particleCount: 80,
-            spread: 60,
-            origin: { y: 0.8 },
-            colors: ["#00e5ff", "#a855f7", "#ffb873"],
-          });
+        const titleLines = [
+          { text: "Let's build", class: "text-white" },
+          { text: "something", class: "text-cyan text-glow" },
+          { text: "together.", class: "text-white" }
+        ];
 
-          if (data.message && data.message.includes("Simulation mode")) {
-            const mailtoUrl = `mailto:gebregebey@gmail.com?subject=${encodeURIComponent(
-              formData.subject || "Message from Portfolio"
-            )}&body=${encodeURIComponent(
-              `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-            )}`;
-            window.location.href = mailtoUrl;
-          }
+        return (
+          <section id="contact" className="py-24 md:py-32 relative overflow-hidden">
+            <ContactBackground />
 
-          setFormData({ name: "", email: "", subject: "", message: "", _honey: "" });
-        } else {
-          setStatus("error");
-          setErrorMsg(data.message || "Failed to send message. Please try again.");
-        }
-      } catch (err) {
-        console.error(err);
-        const mailtoUrl = `mailto:gebregebey@gmail.com?subject=${encodeURIComponent(
-          formData.subject || "Message from Portfolio"
-        )}&body=${encodeURIComponent(
-          `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-        )}`;
-        window.location.href = mailtoUrl;
+            <div className="max-w-5xl mx-auto px-6 md:px-12 lg:px-20">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="section-label mb-4"
+              >
+                Get In Touch
+              </motion.div>
 
-        setStatus("success");
-        confetti({
-          particleCount: 80,
-          spread: 60,
-          origin: { y: 0.8 },
-          colors: ["#00e5ff", "#a855f7", "#ffb873"],
-        });
-        setFormData({ name: "", email: "", subject: "", message: "", _honey: "" });
-      }
-    }, 1200); // 1.2s minimum spinner time
-  };
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start">
+                {/* Left: Contact Info */}
+                <div className="flex flex-col relative">
+                  {/* System Scan Line */}
+                  <motion.div
+                    className="absolute left-0 right-0 h-[1px] bg-cyan/60 shadow-[0_0_8px_#00e5ff] z-20 pointer-events-none"
+                    initial={{ top: -20, opacity: 0 }}
+                    whileInView={{ top: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.2, delay: 0.5, ease: "linear" }}
+                  />
 
-  const titleLines = [
-    { text: "Let's build", class: "text-white" },
-    { text: "something", class: "text-transparent bg-clip-text bg-[linear-gradient(90deg,#00e5ff,#a855f7)] bg-[length:200%_auto] animate-[shimmer_3s_infinite_linear]" },
-    { text: "together.", class: "text-white" }
-  ];
+                  <h2 className="font-grotesk text-4xl md:text-6xl font-black tracking-tight leading-[1.1] mb-6 flex flex-col gap-1 overflow-hidden">
+                    {titleLines.map((line, idx) => {
+                      const words = line.text.split(" ");
+                      return (
+                        <div key={idx} className="overflow-hidden flex gap-[0.3em]">
+                          {words.map((word, wIdx) => (
+                            <motion.span
+                              key={wIdx}
+                              initial={{ y: "100%" }}
+                              whileInView={{ y: 0 }}
+                              viewport={{ once: true }}
+                              transition={{ duration: 0.5, delay: idx * 0.1 + wIdx * 0.08, ease: "easeOut" }}
+                              className={line.class}
+                            >
+                              {word}
+                            </motion.span>
+                          ))}
+                        </div>
+                      );
+                    })}
+                  </h2>
 
-  return (
-    <section id="contact" className="py-24 md:py-32 relative">
-      <div className="max-w-5xl mx-auto px-6 md:px-12 lg:px-20">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="section-label mb-4"
-        >
-          Get In Touch
-        </motion.div>
+                  <div className="flex flex-col gap-4 mt-12">
+                    {socialLinks.map((link, i) => (
+                      <SocialRow key={link.id} link={link} idx={i} />
+                    ))}
+                  </motion.div>
+                </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start">
-          {/* Left: Contact Info */}
-          <div className="flex flex-col">
-            <h2 className="font-grotesk text-4xl md:text-6xl font-black tracking-tight leading-[1.1] mb-6 flex flex-col gap-1 overflow-hidden">
-              {titleLines.map((line, idx) => (
-                <motion.span
-                  key={line.text}
-                  initial={{ y: 50, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
+                {/* Right: Form */}
+                <motion.div
+                  initial={{ opacity: 0, x: 60 }}
+                  whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: idx * 0.15, ease: "easeOut" }}
-                  className={line.class}
+                  transition={{ duration: 0.6, delay: 0.5 }}
                 >
-                  {line.text}
-                </motion.span>
-              ))}
-            </h2>
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-sm md:text-base leading-relaxed text-on-muted mb-12"
-            >
-              I am actively seeking software engineering internship opportunities. If you are looking
-              for a dedicated student who writes clean, documented code and is excited to contribute
-              to real-world projects — get in touch.
-            </motion.p>
+                  <div className="glass-strong p-8 md:p-10 rounded-2xl border border-white/5 shadow-[0_0_40px_rgba(0,229,255,0.05)] relative overflow-hidden">
+                    <form onSubmit={handleContactSubmit} className="flex flex-col gap-5 relative z-10">
+                      <input
+                        type="text"
+                        name="_honey"
+                        value={formData._honey}
+                        onChange={handleChange}
+                        className="hidden"
+                        tabIndex={-1}
+                        autoComplete="off"
+                      />
 
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="flex flex-col gap-6"
-            >
-              <a href="mailto:gebregebey@gmail.com" className="flex items-center gap-4 group transition-transform duration-300 hover:translate-x-2">
-                <div className="w-12 h-12 rounded-xl bg-cyan/5 border border-cyan/15 group-hover:border-cyan/50 flex items-center justify-center text-cyan transition-all duration-300">
-                  <Mail className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-                </div>
-                <span className="font-mono text-sm md:text-base text-on-muted group-hover:text-cyan transition-colors duration-300">
-                  gebregebey@gmail.com
-                </span>
-              </a>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div className="form-field">
+                          <input type="text" id="f-name" name="name" value={formData.name} onChange={handleChange} placeholder=" " required />
+                          <label htmlFor="f-name">NAME</label>
+                        </div>
+                        <div className="form-field">
+                          <input type="email" id="f-email" name="email" value={formData.email} onChange={handleChange} placeholder=" " required />
+                          <label htmlFor="f-email">EMAIL</label>
+                        </div>
+                      </div>
 
-              <a href="https://instagram.com/gigi1232073" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group transition-transform duration-300 hover:translate-x-2">
-                <div className="w-12 h-12 rounded-xl bg-cyan/5 border border-cyan/15 group-hover:border-cyan/50 flex items-center justify-center text-cyan transition-all duration-300">
-                  <InstagramIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-                </div>
-                <span className="font-mono text-sm md:text-base text-on-muted group-hover:text-cyan transition-colors duration-300">
-                  instagram.com/gigi1232073
-                </span>
-              </a>
+                      <div className="form-field">
+                        <input type="text" id="f-subject" name="subject" value={formData.subject} onChange={handleChange} placeholder=" " />
+                        <label htmlFor="f-subject">SUBJECT (OPTIONAL)</label>
+                      </div>
 
-              <a href="https://t.me/GebeyG" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group transition-transform duration-300 hover:translate-x-2">
-                <div className="w-12 h-12 rounded-xl bg-cyan/5 border border-cyan/15 group-hover:border-cyan/50 flex items-center justify-center text-cyan transition-all duration-300">
-                  <TelegramIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-                </div>
-                <span className="font-mono text-sm md:text-base text-on-muted group-hover:text-cyan transition-colors duration-300">
-                  t.me/GebeyG
-                </span>
-              </a>
+                      <div className="form-field">
+                        <textarea id="f-msg" name="message" value={formData.message} onChange={handleChange} placeholder=" " rows={5} required />
+                        <label htmlFor="f-msg">MESSAGE</label>
+                      </div>
 
-              <a href="https://tiktok.com/@gebregebey" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group transition-transform duration-300 hover:translate-x-2">
-                <div className="w-12 h-12 rounded-xl bg-cyan/5 border border-cyan/15 group-hover:border-cyan/50 flex items-center justify-center text-cyan transition-all duration-300">
-                  <TiktokIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-                </div>
-                <span className="font-mono text-sm md:text-base text-on-muted group-hover:text-cyan transition-colors duration-300">
-                  tiktok.com/@gebregebey
-                </span>
-              </a>
+                      <AnimatePresence mode="wait">
+                        {status === "idle" && (
+                          <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                            <MagneticButton type="submit" className="w-full relative inline-flex h-12 items-center justify-center overflow-hidden rounded-md bg-cyan px-8 font-mono text-sm font-bold text-deep transition-all hover:bg-cyan/90 hover:shadow-[0_0_20px_rgba(0,229,255,0.4)] group mt-2">
+                              SEND MESSAGE
+                              <Send className="ml-2 w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                            </MagneticButton>
+                          </motion.div>
+                        )}
 
-              <a href="https://github.com/gebregebey" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group transition-transform duration-300 hover:translate-x-2">
-                <div className="w-12 h-12 rounded-xl bg-cyan/5 border border-cyan/15 group-hover:border-cyan/50 flex items-center justify-center text-cyan transition-all duration-300">
-                  <GithubIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-                </div>
-                <span className="font-mono text-sm md:text-base text-on-muted group-hover:text-cyan transition-colors duration-300">
-                  github.com/gebregebey
-                </span>
-              </a>
+                        {status === "sending" && (
+                          <motion.div key="sending" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-2 w-full h-12 flex items-center justify-center bg-cyan/20 border border-cyan/40 rounded-md">
+                            <Loader2 className="w-5 h-5 text-cyan animate-spin" />
+                          </motion.div>
+                        )}
 
-              <a href="https://linkedin.com/in/gebregebey" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group transition-transform duration-300 hover:translate-x-2">
-                <div className="w-12 h-12 rounded-xl bg-cyan/5 border border-cyan/15 group-hover:border-cyan/50 flex items-center justify-center text-cyan transition-all duration-300">
-                  <LinkedinIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
-                </div>
-                <span className="font-mono text-sm md:text-base text-on-muted group-hover:text-cyan transition-colors duration-300">
-                  linkedin.com/in/gebregebey
-                </span>
-              </a>
-            </motion.div>
-          </div>
+                        {status === "success" && (
+                          <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-2 w-full h-12 flex items-center justify-center gap-2 bg-green-500/20 border border-green-500/50 rounded-md text-green-400 font-mono text-sm shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+                            <CheckCircle className="w-5 h-5 animate-[ping_1s_ease-out_1]" />
+                            MESSAGE SENT!
+                          </motion.div>
+                        )}
 
-          {/* Right: Form */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ type: "spring" as const, stiffness: 90, damping: 18, delay: 0.2 }}
-          >
-            <div className="glass-strong p-8 md:p-10 rounded-2xl border border-white/5 shadow-[0_0_40px_rgba(0,229,255,0.05)] relative overflow-hidden">
-              <form onSubmit={handleContactSubmit} className="flex flex-col gap-5 relative z-10">
-                <input
-                  type="text"
-                  name="_honey"
-                  value={formData._honey}
-                  onChange={handleChange}
-                  className="hidden"
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="form-field">
-                    <input type="text" id="f-name" name="name" value={formData.name} onChange={handleChange} placeholder=" " required />
-                    <label htmlFor="f-name">NAME</label>
+                        {status === "error" && (
+                          <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 w-full flex items-center gap-2 text-danger font-mono text-xs">
+                            <AlertCircle className="w-4 h-4" />
+                            {errorMsg}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </form>
                   </div>
-                  <div className="form-field">
-                    <input type="email" id="f-email" name="email" value={formData.email} onChange={handleChange} placeholder=" " required />
-                    <label htmlFor="f-email">EMAIL</label>
-                  </div>
-                </div>
-
-                <div className="form-field">
-                  <input type="text" id="f-subject" name="subject" value={formData.subject} onChange={handleChange} placeholder=" " />
-                  <label htmlFor="f-subject">SUBJECT (OPTIONAL)</label>
-                </div>
-
-                <div className="form-field">
-                  <textarea id="f-msg" name="message" value={formData.message} onChange={handleChange} placeholder=" " rows={5} required />
-                  <label htmlFor="f-msg">MESSAGE</label>
-                </div>
-
-                <AnimatePresence mode="wait">
-                  {status === "idle" && (
-                    <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                      <MagneticButton type="submit" className="w-full relative inline-flex h-12 items-center justify-center overflow-hidden rounded-md bg-cyan px-8 font-mono text-sm font-bold text-deep transition-all hover:bg-cyan/90 hover:shadow-[0_0_20px_rgba(0,229,255,0.4)] group mt-2">
-                        SEND MESSAGE
-                        <Send className="ml-2 w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                      </MagneticButton>
-                    </motion.div>
-                  )}
-
-                  {status === "sending" && (
-                    <motion.div key="sending" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-2 w-full h-12 flex items-center justify-center bg-cyan/20 border border-cyan/40 rounded-md">
-                      <Loader2 className="w-5 h-5 text-cyan animate-spin" />
-                    </motion.div>
-                  )}
-
-                  {status === "success" && (
-                    <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-2 w-full h-12 flex items-center justify-center gap-2 bg-green-500/20 border border-green-500/50 rounded-md text-green-400 font-mono text-sm shadow-[0_0_20px_rgba(34,197,94,0.3)]">
-                      <CheckCircle className="w-5 h-5 animate-[ping_1s_ease-out_1]" />
-                      MESSAGE SENT!
-                    </motion.div>
-                  )}
-
-                  {status === "error" && (
-                    <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 w-full flex items-center gap-2 text-danger font-mono text-xs">
-                      <AlertCircle className="w-4 h-4" />
-                      {errorMsg}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </form>
+                </motion.div>
+              </div>
             </div>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-}
+          </section>
+        );
+      }
