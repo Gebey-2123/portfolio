@@ -1,11 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { ALL_SOCIAL_LINKS, SocialIcon } from "./SocialIcons"; // Import from new file
+import { ALL_SOCIAL_LINKS, SocialIcon } from "./SocialIcons";
 import { motion, useInView } from "framer-motion";
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const footerLinks = ALL_SOCIAL_LINKS; // This is used in the JSX below, but ESLint might flag it as unused if not directly destructured.
 
 const TypewriterText = ({ text }: { text: string }) => {
   const ref = useRef(null);
