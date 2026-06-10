@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, X, ArrowUpRight } from "lucide-react"; // Keep Mail for email link
+import { Menu, X, ArrowUpRight } from "lucide-react";
 import { GithubIcon, LinkedinIcon, ALL_SOCIAL_LINKS, SocialIcon } from "./SocialIcons"; // Import from new file
 import { motion, AnimatePresence } from "framer-motion";
 
