@@ -324,61 +324,6 @@ export default function OtherSkills() {
     "video-4": ["https://filesamples.com/samples/video/mp4/sample_960x540.mp4"],
   }), []);
 
-  // utility: check if a URL is reachable (HEAD with timeout)
-  const checkUrlReachable = async (url: string, timeout = 3000) => {
-    try {
-      const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), timeout);
-      const res = await fetch(url, { method: "HEAD", signal: controller.signal });
-      clearTimeout(id);
-      return res.ok;
-    } catch {
-      return false;
-    }
-  };
-
-  // when a sample is selected, determine the best available URL to open (local preferred)
-  useEffect(() => {
-    let mounted = true;
-    setAvailableUrl(null);
-    if (!selected) return;
-
-    (async () => {
-      const id = selected.id;
-      // prefer explicit per-sample local file if present
-      if (selected.videoLocal) {
-        const ok = await checkUrlReachable(selected.videoLocal, 1000);
-        if (ok && mounted) {
-          setAvailableUrl(selected.videoLocal);
-          return;
-        }
-      }
-
-      const localList = videoMap[id] || [];
-      for (const u of localList) {
-        const ok = await checkUrlReachable(u, 1200);
-        if (ok && mounted) {
-          setAvailableUrl(u);
-          return;
-        }
-      }
-
-      const remoteList = remoteVideoMap[id] || [];
-      for (const u of remoteList) {
-        const ok = await checkUrlReachable(u, 1600);
-        if (ok && mounted) {
-          setAvailableUrl(u);
-          return;
-        }
-      }
-      // if nothing reachable, leave null (DemoPlayer will show direct links)
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, [selected?.id, selected?.videoLocal, videoMap, remoteVideoMap]);
-
   // sample skills for orbs
   const skillNames = ["Color Grading", "Sound Design", "Montage", "Kinetic Type", "AR", "Social"].slice(0, 6);
 
