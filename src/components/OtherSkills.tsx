@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play, Film, Megaphone, FileText } from "lucide-react";
 
 type SkillTab = "video" | "marketing" | "content";
+
 type Metric = { label: string; value: string };
 
 type SampleWork = {
@@ -207,9 +208,9 @@ const SAMPLES: Record<SkillTab, SampleWork[]> = {
       accentColor: "#a78bfa",
       icon: <FileText size={28} />,
       link: "https://example.com/case/mini-doc",
-        videoLocal: "/videos/content-1.mp4",
-        brief:
-          "Repurposing long-form interviews into high-engagement shorts. Script idea: open on a candid moment, cut to a concise 30s narrative arc (problem → insight → call-to-action), and finish with a visual hook for sequel videos.",
+      videoLocal: "/videos/content-1.mp4",
+      brief:
+        "Repurposing long-form interviews into high-engagement shorts. Script idea: open on a candid moment, cut to a concise 30s narrative arc (problem → insight → call-to-action), and finish with a visual hook for sequel videos.",
     },
   ],
 };
@@ -307,15 +308,12 @@ export default function OtherSkills() {
   // map id -> video src list for modal playback (primary + fallbacks)
   // map id -> local video paths (serve from public/videos). Use fetch_videos.ps1 to populate.
   const videoMap: Record<string, string[]> = useMemo(() => ({
-    // local-first candidates including exact filenames you provided (both root public and /videos folder)
-    "video-1": ["/videos/video_editing1.mp4", "/video_editing1.mp4", "/videos/video_editing1.mp4"],
-    "video-2": ["/videos/video_editing2.mp4", "/video_editing2.mp4"],
-    "video-3": ["/videos/video_editing3.mp4", "/video_editing3.mp4"],
-    "video-4": ["/videos/video_editing4.mp4", "/video_editing4.mp4"],
-    // marketing: accept the exact "Digital Marketing" filename if placed in public or public/videos
-    "marketing-5": ["/videos/Digital_Marketing.mp4", "/Digital_Marketing.mp4", "/videos/Digital_Marketing.mp4"],
-    // content: keep existing content file mapping and also accept creative name
-    "content-5": ["/videos/content-1.mp4", "/content-1.mp4", "/videos/Content_Creation.mp4", "/Content_Creation.mp4"],
+    "video-1": ["/videos/video_editing1.mp4"],
+    "video-2": ["/videos/video_editing2.mp4"],
+    "video-3": ["/videos/video_editing3.mp4"],
+    "video-4": ["/videos/video_editing4.mp4"],
+    "marketing-5": ["/videos/Digital_Marketing.mp4"],
+    "content-5": ["/videos/content-1.mp4"],
   }), []);
 
   // remote fallbacks if local files are missing or blocked
@@ -335,8 +333,8 @@ export default function OtherSkills() {
       clearTimeout(id);
       return res.ok;
     } catch {
-        return false;
-      }
+      return false;
+    }
   };
 
   // when a sample is selected, determine the best available URL to open (local preferred)
@@ -379,7 +377,7 @@ export default function OtherSkills() {
     return () => {
       mounted = false;
     };
-  }, [selected, videoMap, remoteVideoMap]);
+  }, [selected?.id, selected?.videoLocal, videoMap, remoteVideoMap]);
 
   // sample skills for orbs
   const skillNames = ["Color Grading", "Sound Design", "Montage", "Kinetic Type", "AR", "Social"].slice(0, 6);
