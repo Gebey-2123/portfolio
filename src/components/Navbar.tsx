@@ -78,11 +78,10 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 w-100 w-full z-[1000] transition-all duration-300 ${
-          scrolled
-            ? "bg-deep/80 backdrop-blur-md border-b border-white/5 py-3"
-            : "bg-transparent py-5"
-        }`}
+        className={`fixed top-0 left-0 w-100 w-full z-[1000] transition-all duration-300 ${scrolled
+          ? "bg-deep/80 backdrop-blur-md border-b border-white/5 py-3"
+          : "bg-transparent py-5"
+          }`}
       >
         <nav className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 flex items-center justify-between">
           {/* Logo */}
@@ -107,11 +106,10 @@ export default function Navbar() {
                   e.preventDefault();
                   handleLinkClick(item.href);
                 }}
-                className={`font-mono text-xs uppercase tracking-widest transition-all duration-200 relative py-1 hover:text-cyan ${
-                  activeSection === item.href.slice(1)
-                    ? "text-cyan font-bold"
-                    : "text-on-muted"
-                }`}
+                className={`font-mono text-xs uppercase tracking-widest transition-all duration-200 relative py-1 hover:text-cyan ${activeSection === item.href.slice(1)
+                  ? "text-cyan font-bold"
+                  : "text-on-muted"
+                  }`}
               >
                 {item.label}
                 {activeSection === item.href.slice(1) && (
@@ -141,6 +139,33 @@ export default function Navbar() {
                 title="LinkedIn"
               >
                 <LinkedinIcon className="w-4.5 h-4.5 transition-transform duration-500 group-hover:rotate-[360deg]" />
+              </a>
+              <a
+                href="https://instagram.com/gigi1232073"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-on-muted hover:text-cyan transition-colors group"
+                title="Instagram"
+              >
+                <InstagramIcon className="w-4.5 h-4.5 transition-transform duration-500 group-hover:rotate-[360deg]" />
+              </a>
+              <a
+                href="https://t.me/GebeyG"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-on-muted hover:text-cyan transition-colors group"
+                title="Telegram"
+              >
+                <TelegramIcon className="w-4.5 h-4.5 transition-transform duration-500 group-hover:rotate-[360deg]" />
+              </a>
+              <a
+                href="https://tiktok.com/@gebregebey"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-on-muted hover:text-cyan transition-colors group"
+                title="TikTok"
+              >
+                <TiktokIcon className="w-4.5 h-4.5 transition-transform duration-500 group-hover:rotate-[360deg]" />
               </a>
               <a
                 href="mailto:gebregebey@gmail.com"
@@ -187,11 +212,10 @@ export default function Navbar() {
                   e.preventDefault();
                   handleLinkClick(item.href);
                 }}
-                className={`font-mono text-sm tracking-wider py-2.5 border-b border-white/5 last:border-0 hover:text-cyan transition-colors ${
-                  activeSection === item.href.slice(1)
-                    ? "text-cyan font-bold"
-                    : "text-on-surface"
-                }`}
+                className={`font-mono text-sm tracking-wider py-2.5 border-b border-white/5 last:border-0 hover:text-cyan transition-colors ${activeSection === item.href.slice(1)
+                  ? "text-cyan font-bold"
+                  : "text-on-surface"
+                  }`}
               >
                 {item.label}
               </a>
@@ -220,6 +244,33 @@ export default function Navbar() {
                 title="LinkedIn"
               >
                 <LinkedinIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
+              </a>
+              <a
+                href="https://instagram.com/gigi1232073"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-on-muted hover:text-cyan transition-colors group"
+                title="Instagram"
+              >
+                <InstagramIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
+              </a>
+              <a
+                href="https://t.me/GebeyG"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-on-muted hover:text-cyan transition-colors group"
+                title="Telegram"
+              >
+                <TelegramIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
+              </a>
+              <a
+                href="https://tiktok.com/@gebregebey"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-on-muted hover:text-cyan transition-colors group"
+                title="TikTok"
+              >
+                <TiktokIcon className="w-5 h-5 transition-transform duration-500 group-hover:rotate-[360deg]" />
               </a>
               <a
                 href="mailto:gebregebey@gmail.com"
