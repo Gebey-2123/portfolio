@@ -18,30 +18,31 @@ const ContactBackground = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let w: number, h: number;
-    const particles: { x: number; y: number; vx: number; vy: number }[] = [];
+    const wRef = useRef(0);
+    const hRef = useRef(0);
+    const particlesRef = useRef<{ x: number; y: number; vx: number; vy: number }[]>([]);
     const count = 20;
 
     const resize = () => {
-      w = canvas.width = canvas.offsetWidth;
-      h = canvas.height = canvas.offsetHeight;
+      wRef.current = canvas.width = canvas.offsetWidth;
+      hRef.current = canvas.height = canvas.offsetHeight;
     };
     resize();
 
     for (let i = 0; i < count; i++) {
-      particles.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
+      particlesRef.current.push({
+        x: Math.random() * wRef.current,
+        y: Math.random() * hRef.current,
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
       });
     }
 
     const animate = () => {
-      ctx.clearRect(0, 0, w, h);
-      particles.forEach((p, i) => {
-        p.x = (p.x + p.vx + w) % w;
-        p.y = (p.y + p.vy + h) % h;
+      ctx.clearRect(0, 0, wRef.current, hRef.current);
+      particlesRef.current.forEach((p, i) => {
+        p.x = (p.x + p.vx + wRef.current) % wRef.current;
+        p.y = (p.y + p.vy + hRef.current) % hRef.current;
         ctx.beginPath();
         ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(0, 229, 255, 0.15)";
@@ -85,8 +86,6 @@ const CircuitBorder = ({ isFocused }: { isFocused: boolean }) => (
 );
 
 const SocialRow = ({ link, idx }: { link: typeof socialLinks[0], idx: number }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const mouseX = useMotionValue(0); // Used for magnetic effect, but not directly in JSX
   const mouseY = useMotionValue(0);
   const springY = useSpring(mouseY, { stiffness: 100, damping: 15 });
   const [isHovered, setIsHovered] = useState(false);
@@ -213,8 +212,7 @@ export default function Contact() {
             setStatus("error");
             setErrorMsg(data.message || "Failed to send message. Please try again.");
           }
-        } catch (err) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch {
           setStatus("success");
           resetPhase();
         }
