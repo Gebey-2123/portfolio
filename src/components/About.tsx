@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, MapPin, GraduationCap, Briefcase, Rocket } from "lucide-react";
 import Image from "next/image";
 import MagneticButton from "./MagneticButton";
-
 export default function About() {
   const containerVariants = {
     hidden: {},
